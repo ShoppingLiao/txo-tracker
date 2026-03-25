@@ -74,3 +74,30 @@
   margin: 20px 0 0;
   line-height: 1.5;
 }
+
+.inapp-warning {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 10px;
+  padding: 20px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #78350f;
+  line-height: 1.6;
+}
+
+.inapp-warning-icon { font-size: 28px; margin-bottom: 8px; }
+
+.inapp-hint { margin: 12px 0 6px; }
+
+.inapp-url {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: #555;
+  word-break: break-all;
+  margin-top: 8px;
+  user-select: all;
+}
