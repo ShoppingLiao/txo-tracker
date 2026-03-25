@@ -23,7 +23,7 @@ export default function TopBar() {
     <header className="topbar">
       <div className="topbar-brand">
         <span className="topbar-icon">🎯</span>
-        <span className="topbar-title">TXO Tracker</span>
+        <span className="topbar-title">台指選擇權損益紀錄</span>
       </div>
 
       <div className="topbar-user" ref={menuRef}>

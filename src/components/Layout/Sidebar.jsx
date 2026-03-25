@@ -18,7 +18,7 @@ export default function Sidebar() {
     <aside className="sidebar">
       <div className="sidebar-brand">
         <span className="brand-icon">🎯</span>
-        <span className="brand-name">TXO Tracker</span>
+        <span className="brand-name">台指損益紀錄</span>
       </div>
 
       <nav className="sidebar-nav">
