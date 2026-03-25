@@ -45,8 +45,8 @@ export default function Yearly() {
         <span className="cb-meta">{career.count} 筆 ／ {career.contracts} 口</span>
       </div>
 
-      {/* 年度 × 月份彙整表 */}
-      <div className="table-wrapper">
+      {/* 桌面版：年份為列，月份為欄 */}
+      <div className="table-wrapper desktop-table">
         <table className="yearly-table">
           <thead>
             <tr>
@@ -60,7 +60,6 @@ export default function Yearly() {
               const monthStats = getYearStats(year)
               const yearTotal = getYearTotal(year)
               const isHighlight = year === highlightYear
-
               return (
                 <tr key={year} className={isHighlight ? 'highlighted' : ''}>
                   <td className="year-col">{year}</td>
@@ -79,14 +78,63 @@ export default function Yearly() {
                       onClick={() => count > 0 && navigate(`/records?year=${year}&month=${month}`)}
                       style={{ cursor: count > 0 ? 'pointer' : 'default' }}
                     >
-                      {count > 0 ? (
-                        <>
-                          {fmtMoney(profit)}
-                          <div className="cell-sub">{contracts} 口</div>
-                        </>
-                      ) : '—'}
+                      {count > 0 ? (<>{fmtMoney(profit)}<div className="cell-sub">{contracts} 口</div></>) : '—'}
                     </td>
                   ))}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 手機版：月份為列，年份為欄（轉置） */}
+      <div className="table-wrapper mobile-table">
+        <table className="yearly-table">
+          <thead>
+            <tr>
+              <th>月份</th>
+              {years.map((year) => <th key={year}>{year}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {/* 年合計列 */}
+            <tr className="total-row">
+              <td className="year-col" style={{ fontWeight: 700 }}>年合計</td>
+              {years.map((year) => {
+                const t = getYearTotal(year)
+                return (
+                  <td
+                    key={year}
+                    className={`total-col cell-pnl ${profitClass(t.profit)}`}
+                    onClick={() => navigate(`/monthly?year=${year}`)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {fmtMoney(t.profit)}
+                    <div className="cell-sub">{t.contracts} 口</div>
+                  </td>
+                )
+              })}
+            </tr>
+            {/* 各月列 */}
+            {MONTH_NAMES.map((name, i) => {
+              const month = i + 1
+              return (
+                <tr key={month}>
+                  <td className="year-col">{name}</td>
+                  {years.map((year) => {
+                    const { profit, contracts, count } = getYearStats(year).find((s) => s.month === month)
+                    return (
+                      <td
+                        key={year}
+                        className={`cell-pnl ${count > 0 ? profitClass(profit) : 'empty-cell'}`}
+                        onClick={() => count > 0 && navigate(`/records?year=${year}&month=${month}`)}
+                        style={{ cursor: count > 0 ? 'pointer' : 'default' }}
+                      >
+                        {count > 0 ? (<>{fmtMoney(profit)}<div className="cell-sub">{contracts} 口</div></>) : '—'}
+                      </td>
+                    )
+                  })}
                 </tr>
               )
             })}

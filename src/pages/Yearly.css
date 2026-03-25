@@ -74,6 +74,13 @@
   margin-top: 2px;
 }
 
+.mobile-table  { display: none; }
+
+@media (max-width: 768px) {
+  .desktop-table { display: none; }
+  .mobile-table  { display: block; }
+}
+
 .empty-hint {
   background: #fff;
   border-radius: 12px;
