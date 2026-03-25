@@ -91,6 +91,7 @@
   padding: 10px 14px;
   border-bottom: 1px solid #f4f4f4;
   color: #333;
+  white-space: nowrap;
 }
 
 .trade-table tr:last-child td { border-bottom: none; }

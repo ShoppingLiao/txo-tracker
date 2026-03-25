@@ -48,6 +48,8 @@
   border-bottom: 1px solid #f4f4f4;
   text-align: right;
   vertical-align: top;
+  min-height: 55px;
+  height: 55px;
 }
 
 .yearly-table tr:last-child td { border-bottom: none; }
