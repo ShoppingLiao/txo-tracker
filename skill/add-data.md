@@ -1,6 +1,7 @@
 # 新增交易資料
 
 ## 方式一：UI 手動新增
+
 操作紀錄頁面 → 右上角「＋ 新增紀錄」
 
 ## 方式二：匯入 JSON 檔案（批量）
@@ -63,18 +64,26 @@ returnRate = profit / (contracts × 1250)
 ## 匯入操作
 
 1. 準備好 JSON 檔案（參考上方格式）
-2. Sidebar → **合併匯入**（保留現有資料，依 id 去重）
-3. 或 **覆蓋匯入**（取代全部，會彈出確認）
+2. 右上角頭像選單（手機）或左側 Sidebar（桌面）→ **合併匯入**（保留現有資料，依 id 去重）
+3. 或 **覆蓋匯入**（取代全部）
 
 ## 匯出備份
 
-Sidebar → **匯出** → 下載 `txo-trades.json`
+右上角頭像選單（手機）或左側 Sidebar（桌面）→ **匯出 JSON**
 
 ---
 
-## 請 AI 幫忙建立 JSON
+## 使用 AI 輔助建立 JSON
 
-把 Excel/截圖資料提供給 AI，請求格式：
+有截圖或 Excel 資料？可以請 ChatGPT / Gemini 幫忙轉換。
+
+完整操作說明請見：[docs/ai-import-guide.md](../docs/ai-import-guide.md)
+
+---
+
+## 請 AI 產生 JSON 的快速指令（Claude）
+
+把 Excel/截圖資料提供給 Claude，請求格式：
 
 > 請依照 `skill/add-data.md` 的格式，將以下資料建立成可匯入的 JSON 檔案：
 > [貼上資料]

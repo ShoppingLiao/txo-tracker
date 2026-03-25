@@ -1,15 +1,21 @@
 # 專案架構
 
 ## 技術棧
-- **React 19** + **Vite 8**
-- **Zustand 5** — 狀態管理（含 localStorage 持久化）
-- **React Router 7** — 路由（basename: `/txo-tracker/`）
-- **Recharts** — 圖表（目前保留，尚未使用）
+
+| 套件 | 版本 | 用途 |
+|---|---|---|
+| React | 19 | UI 框架 |
+| Vite | 8 | 建置工具（`base: '/txo-tracker/'`） |
+| Zustand | 5 | 前端狀態管理（in-memory cache，不使用 persist） |
+| React Router | 7 | 路由（basename: `/txo-tracker/`） |
+| Firebase | 12 | Auth（Google 登入）+ Firestore（雲端資料庫） |
+| Recharts | — | 圖表（保留，尚未使用） |
 
 ## 部署
+
 - **GitHub Pages**：https://shoppingliao.github.io/txo-tracker/
 - **Repo**：https://github.com/ShoppingLiao/txo-tracker
-- Push 到 `main` 自動觸發 GitHub Actions 部署
+- Push 到 `main` 自動觸發 GitHub Actions，Firebase config 透過 GitHub Secrets 注入
 
 ---
 
@@ -17,84 +23,141 @@
 
 ```
 src/
-├── App.jsx                    # 路由設定（BrowserRouter basename）
+├── App.jsx                      # AuthProvider + 路由（登入守衛）
 ├── main.jsx
-├── index.css                  # 全域樣式、body 背景色
+├── index.css                    # 全域樣式、body 背景色
+│
+├── lib/
+│   └── firebase.js              # Firebase app / auth / db 初始化
+│
+├── contexts/
+│   └── AuthContext.jsx          # Google 登入狀態（user, loading, signIn, signOut）
+│
+├── services/
+│   └── tradeService.js          # Firestore CRUD（addTrade, updateTrade, deleteTrade,
+│                                #   subscribeTrades, batchImport, deleteAllTrades）
 │
 ├── store/
-│   └── useTradeStore.js       # 唯一資料來源（Zustand + persist）
+│   └── useTradeStore.js         # Zustand store（setTrades + 查詢方法，無 CRUD）
 │
 ├── hooks/
-│   └── useFileStorage.js      # 本機 JSON 檔案讀寫 + 匯出/匯入邏輯
+│   ├── useFirestoreSync.js      # 訂閱 Firestore onSnapshot → 更新 store
+│   ├── useTrades.js             # 統一 hook：讀取 store + 寫入 Firestore + 匯出/匯入
+│   └── useFileStorage.js        # 舊版本機檔案 hook（保留，已不使用）
 │
 ├── utils/
-│   ├── fileStorage.js         # File System Access API 封裝
-│   └── format.js              # fmtMoney / fmtPct / profitClass
+│   ├── fileStorage.js           # File System Access API 封裝（保留，已不使用）
+│   └── format.js                # fmtMoney / fmtPct / profitClass / MONTH_NAMES
 │
 ├── pages/
-│   ├── Dashboard.jsx/.css     # 生涯總覽
-│   ├── Records.jsx/.css       # 操作紀錄（表格，月份分組）
-│   ├── Monthly.jsx/.css       # 月結算（12 張卡片）
-│   └── Yearly.jsx/.css        # 年結算（跨年月份矩陣）
+│   ├── Login.jsx/.css           # Google 登入頁（含 in-app 瀏覽器提示）
+│   ├── Dashboard.jsx/.css       # 生涯總覽
+│   ├── Records.jsx/.css         # 操作紀錄（表格，月份分組）
+│   ├── Monthly.jsx/.css         # 月結算（12 張卡片）
+│   └── Yearly.jsx/.css          # 年結算（桌面橫向矩陣 / 手機轉置表格）
 │
 └── components/
     ├── Layout/
-    │   ├── MainLayout.jsx     # Sidebar + <Outlet>
-    │   ├── Sidebar.jsx        # 導覽列 + 資料儲存區
-    │   └── Sidebar.css
+    │   ├── MainLayout.jsx        # layout 容器（TopBar + Sidebar + Outlet + BottomNav）
+    │   ├── MainLayout.css        # RWD：手機隱藏 Sidebar，main-content 底部留空
+    │   ├── Sidebar.jsx           # 桌面導覽 + 用戶資訊 + 備份按鈕（桌面顯示）
+    │   ├── Sidebar.css
+    │   ├── TopBar.jsx            # 手機頂部 Bar：品牌名 + 用戶頭像選單（手機顯示）
+    │   ├── TopBar.css
+    │   ├── BottomNav.jsx         # 手機底部導覽列（手機顯示）
+    │   └── BottomNav.css
     └── Records/
-        ├── TradeForm.jsx      # 新增/編輯 Modal
-        └── TradeForm.css
+        ├── TradeForm.jsx         # 新增/編輯 Modal（使用 useTrades hook）
+        └── TradeForm.css         # RWD：三欄在手機自動換行
 ```
-
----
-
-## 顏色規範（台灣習慣）
-
-| 用途 | 色票 |
-|---|---|
-| 正數（獲利） | `#dc2626`（深紅）/ `#f87171`（深色背景） |
-| 負數（虧損） | `#16a34a`（深綠）/ `#4ade80`（深色背景） |
-| 主要深色背景 | `#2d4a6b` |
-| Sidebar 背景 | `#1f3347` |
-| 按鈕/active  | `#1a5299` |
-| 深色文字 | `#2c3e50` |
-| 淺色說明文字（深背景）| `#d0d8e4` |
 
 ---
 
 ## 資料流
 
 ```
-useTradeStore (Zustand)
-  ├── 讀寫 localStorage（key: txo-trades-v2）
-  └── useFileStorage hook
-        ├── 連結本機 JSON → auto-save on trades 變更
-        ├── 合併匯入 (mergeTrades)
-        └── 覆蓋匯入 (importTrades)
+Google 登入
+    ↓
+AuthContext（user, loading）
+    ↓
+useFirestoreSync（onSnapshot 訂閱 users/{uid}/trades）
+    ↓
+useTradeStore.setTrades(trades)    ← 即時更新 in-memory store
+    ↓
+所有頁面從 useTrades() / useTradeStore() 讀取資料
+
+寫入路徑：
+useTrades.addTrade(data)
+    ↓
+tradeService.addTrade(uid, data)   ← 寫入 Firestore
+    ↓
+onSnapshot 觸發 → store 自動更新   ← UI 自動重渲
 ```
 
-### Store Actions
+### Firestore 結構
 
-| Action | 說明 |
+```
+users/
+  {uid}/
+    trades/
+      {tradeId}/    ← document ID = String(trade.id)
+        id, date, dayOfWeek, contracts,
+        commission, tax, profit, returnRate, note
+```
+
+---
+
+## useTrades Hook API
+
+所有需要讀寫資料的元件都使用 `useTrades()`：
+
+| 方法 | 說明 |
 |---|---|
-| `addTrade(trade)` | 新增一筆，依日期排序 |
-| `updateTrade(id, data)` | 更新 |
-| `deleteTrade(id)` | 刪除 |
-| `importTrades(arr)` | 覆蓋全部資料 |
-| `mergeTrades(arr)` | 合併（依 id 去重） |
-| `getMonthTrades(year, month)` | 取某月資料 |
+| `trades` | 目前所有交易（從 store 讀取） |
+| `addTrade(data)` | 新增一筆（寫 Firestore） |
+| `updateTrade(id, data)` | 更新一筆（寫 Firestore） |
+| `deleteTrade(id)` | 刪除一筆（寫 Firestore） |
+| `exportJSON()` | 下載備份 JSON |
+| `importJSON()` | 合併匯入（依 id 去重） |
+| `replaceJSON()` | 覆蓋匯入（清空後重寫） |
+| `getYears()` | 有資料的年份清單 |
 | `getMonthStats(year, month)` | 某月統計 |
 | `getYearStats(year)` | 12 個月統計陣列 |
 | `getYearTotal(year)` | 全年合計 |
-| `getYears()` | 有資料的年份清單 |
 | `getCareerStats()` | 生涯合計 |
+
+---
+
+## 顏色規範（台灣習慣：漲紅跌綠）
+
+| 用途 | 色票 |
+|---|---|
+| 正數（獲利）淺色背景 | `#dc2626`（深紅）|
+| 正數（獲利）深色背景 | `#f87171`（淺紅）|
+| 負數（虧損）淺色背景 | `#16a34a`（深綠）|
+| 負數（虧損）深色背景 | `#4ade80`（淺綠）|
+| 卡片頂部邊框（正） | `#ef4444` |
+| 卡片頂部邊框（負） | `#22c55e` |
+| Sidebar / TopBar 背景 | `#1f3347` |
+| 主要深色背景（hero bar）| `#2d4a6b` |
+| 按鈕 / active | `#1a5299` |
+| 深色文字 | `#2c3e50` |
+| 淺色說明文字（深背景）| `#d0d8e4` |
+
+---
+
+## RWD 斷點
+
+| 斷點 | 說明 |
+|---|---|
+| `> 768px` | 桌面：Sidebar 顯示，TopBar / BottomNav 隱藏 |
+| `≤ 768px` | 手機：TopBar + BottomNav 顯示，Sidebar 隱藏 |
 
 ---
 
 ## 注意事項
 
-- Zustand selector 內**不可直接呼叫 `getXxx()`**（會回傳新陣列/物件，觸發無限渲染）
-  - 正確做法：取函式 reference，搭配 `useMemo` 計算
-- `profitClass()` 回傳 `'profit'` / `'loss'` / `''`，CSS class 對應台灣習慣（漲紅跌綠）
-- 報酬率公式：`profit / (contracts × 1250)`，存小數（例：`0.0733`），`fmtPct()` 自動乘 100 顯示
+- Zustand selector 取**函式 reference**，搭配 `useMemo` 計算，避免無限渲染
+- `profitClass()` 回傳 `'profit'` / `'loss'` / `''`
+- 報酬率公式：`profit / (contracts × 1250)`，存小數，`fmtPct()` 自動乘 100 顯示
+- CSS 權重：`.trade-table td.profit` 需比 `.trade-table td` 更高才能覆蓋顏色
