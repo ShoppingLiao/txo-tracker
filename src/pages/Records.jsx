@@ -148,13 +148,13 @@ function MonthGroup({ month, year, rows, onEdit, onDelete }) {
               <th>實際獲利</th>
               <th>報酬率</th>
               <th>備註</th>
-              <th></th>
+              <th>操作</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((t) => (
               <tr key={t.id}>
-                <td>{t.date}</td>
+                <td>{t.date.slice(5)}</td>
                 <td>{t.dayOfWeek}</td>
                 <td>{t.contracts}</td>
                 <td>{t.commission?.toLocaleString()}</td>
@@ -166,7 +166,7 @@ function MonthGroup({ month, year, rows, onEdit, onDelete }) {
                   {typeof t.returnRate === 'number' ? fmtPct(t.returnRate) : (t.returnRate || '—')}
                 </td>
                 <td className="note-cell">{t.note}</td>
-                <td>
+                <td className="action-cell">
                   <button className="btn-edit" onClick={() => onEdit(t)}>編輯</button>
                   <button className="btn-delete" onClick={() => onDelete(t.id)}>刪除</button>
                 </td>

@@ -100,6 +100,8 @@
 .trade-table td.loss   { color: #16a34a; font-weight: 600; }
 .note-cell { color: #888; }
 
+.action-cell { white-space: nowrap; }
+
 .btn-edit, .btn-delete {
   border: none;
   padding: 3px 8px;

@@ -88,6 +88,13 @@
 
 .year-detail { display: flex; gap: 8px; font-size: 12px; color: #aaa; }
 
+@media (max-width: 768px) {
+  .year-cards { flex-direction: column; }
+  .year-card  { min-width: unset; width: 100%; }
+  .career-hero { padding: 24px 20px; }
+  .career-pnl  { font-size: 40px; }
+}
+
 .empty-hint {
   background: #fff;
   border-radius: 12px;

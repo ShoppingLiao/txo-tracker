@@ -136,3 +136,9 @@ label select:focus {
 }
 
 .btn-submit:hover { background: #1a4a80; }
+
+@media (max-width: 540px) {
+  .form-row { flex-wrap: wrap; }
+  .form-row label { flex: 1 1 calc(50% - 6px); min-width: 120px; }
+  .label-wide { flex: 1 1 100% !important; }
+}
