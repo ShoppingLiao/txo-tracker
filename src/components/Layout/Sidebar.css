@@ -1,0 +1,163 @@
+.sidebar {
+  width: 220px;
+  min-height: 100vh;
+  background: #1f3347;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  flex-shrink: 0;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 24px 32px;
+  border-bottom: 1px solid #2e4a66;
+}
+
+.brand-icon {
+  font-size: 24px;
+}
+
+.brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  gap: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #d0d8e4;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.nav-item:hover {
+  background: #2e4a66;
+  color: #fff;
+}
+
+.nav-item.active {
+  background: #1a5299;
+  color: #fff;
+}
+
+.nav-icon {
+  font-size: 16px;
+}
+
+/* ── 資料儲存區 ─────────────────────────────── */
+.storage-section {
+  margin: 0 12px;
+  padding: 14px 12px;
+  border: 1px solid #2e4a66;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.storage-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #d0d8e4;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 2px;
+}
+
+.storage-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 20px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot.status-off    { background: #d0d8e4; }
+.status-dot.status-saving { background: #facc15; }
+.status-dot.status-ok     { background: #22c55e; }
+.status-dot.status-err    { background: #ef4444; }
+
+.status-text {
+  font-size: 11px;
+  color: #d0d8e4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.btn-disconnect {
+  background: none;
+  border: none;
+  color: #d0d8e4;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 1px 3px;
+  border-radius: 3px;
+  line-height: 1;
+}
+.btn-disconnect:hover { color: #ef4444; background: #2e4a66; }
+
+.storage-row {
+  display: flex;
+  gap: 6px;
+}
+
+.storage-btn {
+  flex: 1;
+  padding: 6px 0;
+  background: #2e4a66;
+  border: none;
+  border-radius: 6px;
+  color: #d0d8e4;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.storage-btn:hover       { background: #3e5c7a; color: #fff; }
+.storage-btn.primary     { background: #1a5299; color: #fff; }
+.storage-btn.primary:hover { background: #1a4a80; }
+
+.status-hint {
+  font-size: 11px;
+  color: #22c55e;
+  padding: 4px 0;
+}
+
+.storage-hint {
+  font-size: 11px;
+  color: #d0d8e4;
+  line-height: 1.5;
+}
+
+/* ───────────────────────────────────────────── */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 24px;
+  font-size: 11px;
+  color: #d0d8e4;
+  border-top: 1px solid #2e4a66;
+}

@@ -1,0 +1,99 @@
+.page-header { margin-bottom: 28px; }
+.page-title { font-size: 22px; font-weight: 700; color: #2c3e50; margin: 0 0 4px; }
+.page-subtitle { font-size: 12px; color: #aaa; margin: 0; }
+
+.career-hero {
+  background: #2d4a6b;
+  border-radius: 16px;
+  padding: 36px 40px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.career-pnl-label {
+  font-size: 12px;
+  color: #d0d8e4;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.career-pnl {
+  font-size: 52px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.career-pnl.profit { color: #f87171; }
+.career-pnl.loss   { color: #4ade80; }
+
+.career-unit {
+  font-size: 18px;
+  font-weight: 400;
+  color: #d0d8e4;
+  margin-left: 6px;
+}
+
+.career-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #d0d8e4;
+  flex-wrap: wrap;
+}
+
+.dot { color: #6b87a8; }
+
+.section { margin-bottom: 32px; }
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.year-cards {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.year-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  min-width: 160px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  border-top: 3px solid #ddd;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.year-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.year-card.profit { border-top-color: #ef4444; }
+.year-card.loss   { border-top-color: #22c55e; }
+
+.year-label { font-size: 13px; color: #888; margin-bottom: 8px; font-weight: 500; }
+
+.year-pnl { font-size: 24px; font-weight: 700; color: #2c3e50; margin-bottom: 10px; }
+.year-card.profit .year-pnl { color: #dc2626; }
+.year-card.loss   .year-pnl { color: #16a34a; }
+
+.year-detail { display: flex; gap: 8px; font-size: 12px; color: #aaa; }
+
+.empty-hint {
+  background: #fff;
+  border-radius: 12px;
+  padding: 48px;
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}

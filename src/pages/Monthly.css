@@ -1,0 +1,90 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.page-title { font-size: 22px; font-weight: 700; color: #2c3e50; margin: 0 0 4px; }
+.page-subtitle { font-size: 12px; color: #aaa; margin: 0; }
+
+.year-select-group { display: flex; gap: 6px; }
+.tab {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab:hover { border-color: #1a5299; color: #1a5299; }
+.tab.active { background: #1a5299; color: #fff; border-color: #1a5299; }
+
+.year-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #2d4a6b;
+  border-radius: 12px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+}
+
+.ysb-label { font-size: 13px; color: #d0d8e4; }
+.ysb-pnl { font-size: 22px; font-weight: 700; color: #fff; }
+.ysb-pnl.profit { color: #f87171; }
+.ysb-pnl.loss   { color: #4ade80; }
+.ysb-meta { font-size: 13px; color: #d0d8e4; margin-left: auto; }
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .month-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.month-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-top: 3px solid #e5e7eb;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.month-card:hover:not(.empty) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.month-card.empty { cursor: default; opacity: 0.5; }
+.month-card.profit { border-top-color: #ef4444; }
+.month-card.loss   { border-top-color: #22c55e; }
+
+.mc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.mc-month { font-size: 14px; font-weight: 700; color: #2c3e50; }
+.mc-count { font-size: 11px; color: #aaa; }
+
+.mc-pnl { font-size: 22px; font-weight: 700; color: #2c3e50; margin-bottom: 8px; }
+.month-card.profit .mc-pnl { color: #dc2626; }
+.month-card.loss   .mc-pnl { color: #16a34a; }
+
+.mc-detail {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.mc-cost {
+  font-size: 11px;
+  color: #bbb;
+}

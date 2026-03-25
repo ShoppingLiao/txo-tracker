@@ -1,0 +1,85 @@
+.page-header { margin-bottom: 20px; }
+.page-title { font-size: 22px; font-weight: 700; color: #2c3e50; margin: 0 0 4px; }
+.page-subtitle { font-size: 12px; color: #aaa; margin: 0; }
+
+.career-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #2d4a6b;
+  border-radius: 12px;
+  padding: 16px 24px;
+  margin-bottom: 20px;
+}
+
+.cb-label { font-size: 13px; color: #d0d8e4; }
+.cb-pnl { font-size: 22px; font-weight: 700; color: #fff; }
+.cb-pnl.profit { color: #f87171; }
+.cb-pnl.loss   { color: #4ade80; }
+.cb-meta { font-size: 13px; color: #d0d8e4; margin-left: auto; }
+
+.table-wrapper {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  overflow-x: auto;
+}
+
+.yearly-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.yearly-table th {
+  background: #f8f9fa;
+  padding: 10px 12px;
+  text-align: right;
+  font-weight: 600;
+  color: #666;
+  border-bottom: 2px solid #eee;
+}
+
+.yearly-table th:first-child { text-align: left; }
+
+.yearly-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f4f4f4;
+  text-align: right;
+  vertical-align: top;
+}
+
+.yearly-table tr:last-child td { border-bottom: none; }
+.yearly-table tr:hover td { background: #fafafa; }
+.yearly-table tr.highlighted td { background: #f0f7ff; }
+
+.year-col { text-align: left; font-weight: 700; color: #2c3e50; }
+
+.total-col {
+  font-weight: 700;
+  background: #f8f9fa !important;
+  border-right: 2px solid #eee;
+}
+
+.cell-pnl { font-weight: 600; }
+.cell-pnl.profit { color: #dc2626; }
+.cell-pnl.loss   { color: #16a34a; }
+.cell-pnl.empty-cell { color: #ddd; font-weight: 400; }
+
+.cell-sub {
+  font-size: 11px;
+  font-weight: 400;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+.empty-hint {
+  background: #fff;
+  border-radius: 12px;
+  padding: 48px;
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}

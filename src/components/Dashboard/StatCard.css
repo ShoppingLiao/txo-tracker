@@ -1,0 +1,32 @@
+.stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid #d0d0d0;
+}
+
+.stat-card--profit { border-left-color: #22c55e; }
+.stat-card--loss   { border-left-color: #ef4444; }
+.stat-card--info   { border-left-color: #3b82f6; }
+.stat-card--warn   { border-left-color: #f59e0b; }
+
+.stat-title {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.stat-unit {
+  font-size: 14px;
+  font-weight: 400;
+  color: #888;
+  margin-left: 4px;
+}

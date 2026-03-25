@@ -1,0 +1,125 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.page-title { font-size: 22px; font-weight: 700; color: #2c3e50; margin: 0 0 4px; }
+.page-subtitle { font-size: 12px; color: #aaa; margin: 0; }
+
+.btn-add {
+  padding: 9px 20px;
+  background: #1a5299;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.btn-add:hover { background: #1a4a80; }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+
+.tab {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab:hover { border-color: #1a5299; color: #1a5299; }
+.tab.active { background: #1a5299; color: #fff; border-color: #1a5299; }
+
+.month-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 20px; }
+
+.month-tab {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #f0f0f0;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.month-tab:hover { background: #e0e0e0; }
+.month-tab.active { background: #2d4a6b; color: #fff; }
+
+.month-group { margin-bottom: 24px; }
+
+.month-group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.month-group-title { font-size: 15px; font-weight: 700; color: #2c3e50; }
+.month-subtotal { font-size: 14px; font-weight: 600; }
+.month-subtotal.profit { color: #dc2626; }
+.month-subtotal.loss   { color: #16a34a; }
+.month-contracts { font-size: 13px; color: #aaa; }
+
+.table-wrapper {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.trade-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+.trade-table th {
+  background: #f8f9fa;
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  color: #666;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+}
+
+.trade-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f4f4f4;
+  color: #333;
+}
+
+.trade-table tr:last-child td { border-bottom: none; }
+.trade-table tr:hover td { background: #fafafa; }
+
+.profit { color: #dc2626; font-weight: 600; }
+.loss   { color: #16a34a; font-weight: 600; }
+.note-cell { color: #888; }
+
+.btn-edit, .btn-delete {
+  border: none;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 4px;
+  transition: background 0.15s;
+}
+.btn-edit   { background: #eff6ff; color: #2563eb; }
+.btn-edit:hover { background: #dbeafe; }
+.btn-delete { background: #fef2f2; color: #ef4444; }
+.btn-delete:hover { background: #fee2e2; }
+
+.empty-hint {
+  background: #fff;
+  border-radius: 12px;
+  padding: 48px;
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
