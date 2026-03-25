@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import Records from './pages/Records'
 import Monthly from './pages/Monthly'
 import Yearly from './pages/Yearly'
+import Guide from './pages/Guide'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -29,6 +30,7 @@ function AppRoutes() {
         <Route path="records" element={<Records />} />
         <Route path="monthly" element={<Monthly />} />
         <Route path="yearly" element={<Yearly />} />
+        <Route path="guide" element={<Guide />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

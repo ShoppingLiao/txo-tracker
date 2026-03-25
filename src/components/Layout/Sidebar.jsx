@@ -8,6 +8,7 @@ const navItems = [
   { path: '/records', label: '操作紀錄', icon: '📋' },
   { path: '/monthly', label: '月結算',   icon: '📅' },
   { path: '/yearly',  label: '年結算',   icon: '📊' },
+  { path: '/guide',   label: '匯入說明', icon: '📖' },
 ]
 
 export default function Sidebar() {

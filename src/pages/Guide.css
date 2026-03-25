@@ -1,0 +1,102 @@
+.guide { max-width: 760px; }
+
+.guide-body {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 32px 36px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #333;
+}
+
+/* 標題 */
+.guide-body h1 { font-size: 22px; font-weight: 700; color: #1f3347; margin: 0 0 24px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb; }
+.guide-body h2 { font-size: 17px; font-weight: 700; color: #1f3347; margin: 32px 0 12px; padding-left: 10px; border-left: 4px solid #1a5299; }
+.guide-body h3 { font-size: 14px; font-weight: 700; color: #2c3e50; margin: 20px 0 8px; }
+
+/* 段落 */
+.guide-body p { margin: 8px 0; }
+
+/* 分隔線 */
+.guide-body hr { border: none; border-top: 1px solid #f0f0f0; margin: 28px 0; }
+
+/* 粗體 */
+.guide-body strong { color: #1f3347; }
+
+/* 程式碼區塊 */
+.guide-body pre {
+  background: #f6f8fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+.guide-body code {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #24292f;
+}
+
+/* inline code */
+.guide-body p code,
+.guide-body li code {
+  background: #f0f2f5;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 12px;
+  color: #d63384;
+}
+
+/* 列表 */
+.guide-body ul,
+.guide-body ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+.guide-body li { margin: 4px 0; }
+
+/* 表格 */
+.guide-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 13px;
+}
+.guide-body th {
+  background: #f8f9fa;
+  padding: 9px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 2px solid #e5e7eb;
+  border-top: 1px solid #e5e7eb;
+}
+.guide-body td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+/* blockquote（提示區塊） */
+.guide-body blockquote {
+  background: #f0f7ff;
+  border-left: 4px solid #1a5299;
+  border-radius: 0 8px 8px 0;
+  margin: 12px 0;
+  padding: 10px 16px;
+  color: #2c3e50;
+}
+.guide-body blockquote p { margin: 4px 0; }
+
+/* RWD */
+@media (max-width: 768px) {
+  .guide-body {
+    padding: 20px 16px;
+    font-size: 13px;
+  }
+  .guide-body pre { font-size: 12px; }
+}
