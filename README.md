@@ -1,16 +1,60 @@
-# React + Vite
+# TXO Tracker 台指選擇權操作紀錄
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+個人用的台指選擇權（TXO）交易紀錄工具，支援月/年結算統計與本機 JSON 備份。
 
-Currently, two official plugins are available:
+🔗 **線上版本**：https://shoppingliao.github.io/txo-tracker/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 功能
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **生涯總覽** — 累計損益、勝率、各年度快速概覽
+- **操作紀錄** — 依年份 / 月份篩選，支援新增、編輯、刪除
+- **月結算** — 12 個月損益卡片，點擊跳轉明細
+- **年結算** — 跨年月份矩陣，一眼掌握歷史績效
 
-## Expanding the ESLint configuration
+### 資料儲存
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| 方式 | 說明 |
+|---|---|
+| localStorage | 自動快取，重新整理不遺失 |
+| 連結本機檔案 | Chrome / Edge 支援，每次修改自動寫入指定 `.json` |
+| 匯出 JSON | 手動下載備份，跨瀏覽器皆可用 |
+| 合併匯入 | 載入 JSON，依 id 去重合併，不覆蓋現有資料 |
+
+---
+
+## 使用方式
+
+### 新增紀錄
+
+1. 前往「操作紀錄」頁面
+2. 點右上角「＋ 新增紀錄」
+3. 填入日期、口數、手續費、期交稅、實際獲利
+4. 報酬率自動計算（`獲利 ÷ 口數 × 1250`）
+
+### 資料備份
+
+- 左側 Sidebar 下方 → **匯出**，下載 `txo-trades.json`
+- 下次需要還原時 → **合併匯入** 選擇該檔案
+
+### 連結本機檔案（Chrome / Edge）
+
+1. Sidebar → **開啟檔案**（選擇現有 JSON）或 **新建檔案**
+2. 連結後每次新增/編輯/刪除自動儲存，狀態燈顯示儲存結果
+
+---
+
+## 本地開發
+
+```bash
+npm install
+npm run dev
+# 開啟 http://localhost:5173/txo-tracker/
+```
+
+---
+
+## 技術棧
+
+React 19 · Vite 8 · Zustand 5 · React Router 7
