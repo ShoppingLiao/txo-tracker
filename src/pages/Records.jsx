@@ -164,7 +164,7 @@ function MonthGroup({ month, year, rows, onEdit, onDelete }) {
                 <td className={profitClass(t.profit)}>
                   {fmtMoney(t.profit)}
                 </td>
-                <td className="note-cell">
+                <td className={typeof t.returnRate === 'number' ? profitClass(t.returnRate) : 'note-cell'}>
                   {typeof t.returnRate === 'number' ? fmtPct(t.returnRate) : (t.returnRate || '—')}
                 </td>
                 <td className="note-cell">{t.note}</td>

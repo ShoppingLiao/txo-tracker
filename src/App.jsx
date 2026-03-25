@@ -7,7 +7,7 @@ import Yearly from './pages/Yearly'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/txo-tracker/">
       <Routes>
         <Route element={<MainLayout />}>
           <Route index element={<Dashboard />} />
