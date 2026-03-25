@@ -6,6 +6,19 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <title>台指選擇權損益紀錄</title>
+    <!-- GitHub Pages SPA：還原 404.html 編碼的路徑 -->
+    <script>
+      (function(l) {
+        if (l.search[1] === 'p') {
+          var p = l.search.slice(1).split('&')
+          var path = p[0].slice(2).replace(/~and~/g, '&')
+          var query = p[1] ? '?' + p[1].replace(/~and~/g, '&') : ''
+          window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + '/' + path + query + l.hash
+          )
+        }
+      }(window.location))
+    </script>
     <meta name="description" content="台指選擇權（TXO）操作損益記錄工具，支援多帳號、雲端同步、手機操作。" />
 
     <!-- Open Graph（LINE、FB、社群預覽） -->

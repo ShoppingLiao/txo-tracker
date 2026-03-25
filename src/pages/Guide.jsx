@@ -1,4 +1,5 @@
 import ReactMarkdown from 'react-markdown'
+import rehypeSlug from 'rehype-slug'
 import guideContent from '../../docs/ai-import-guide.md?raw'
 import './Guide.css'
 
@@ -13,7 +14,7 @@ export default function Guide() {
       </div>
 
       <div className="guide-body">
-        <ReactMarkdown>{guideContent}</ReactMarkdown>
+        <ReactMarkdown rehypePlugins={[rehypeSlug]}>{guideContent}</ReactMarkdown>
       </div>
     </div>
   )
