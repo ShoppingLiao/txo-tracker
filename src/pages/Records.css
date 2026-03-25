@@ -96,8 +96,8 @@
 .trade-table tr:last-child td { border-bottom: none; }
 .trade-table tr:hover td { background: #fafafa; }
 
-.profit { color: #dc2626; font-weight: 600; }
-.loss   { color: #16a34a; font-weight: 600; }
+.trade-table td.profit { color: #dc2626; font-weight: 600; }
+.trade-table td.loss   { color: #16a34a; font-weight: 600; }
 .note-cell { color: #888; }
 
 .btn-edit, .btn-delete {
