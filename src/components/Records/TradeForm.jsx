@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import useTradeStore from '../../store/useTradeStore'
+import { useTrades } from '../../hooks/useTrades'
 import { fmtPct, profitClass } from '../../utils/format'
 import './TradeForm.css'
 
@@ -23,8 +23,7 @@ const EMPTY = {
 }
 
 export default function TradeForm({ trade, onClose }) {
-  const addTrade    = useTradeStore((s) => s.addTrade)
-  const updateTrade = useTradeStore((s) => s.updateTrade)
+  const { addTrade, updateTrade } = useTrades()
 
   const [form, setForm] = useState(trade ? { ...trade } : EMPTY)
 

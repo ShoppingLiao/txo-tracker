@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
 function calcStats(trades) {
   return {
@@ -12,80 +11,35 @@ function calcStats(trades) {
   }
 }
 
-const useTradeStore = create(
-  persist(
-    (set, get) => ({
-      trades: [],
+const useTradeStore = create((set, get) => ({
+  trades: [],
 
-      // ── CRUD ──────────────────────────────────────────────
-      addTrade: (trade) =>
-        set((s) => ({
-          trades: [...s.trades, { ...trade, id: Date.now() }].sort((a, b) =>
-            a.date < b.date ? 1 : -1
-          ),
-        })),
+  /** 由 useFirestoreSync 呼叫，將 Firestore 資料同步到 store */
+  setTrades: (trades) => set({ trades }),
 
-      updateTrade: (id, updated) =>
-        set((s) => ({
-          trades: s.trades
-            .map((t) => (t.id === id ? { ...t, ...updated } : t))
-            .sort((a, b) => (a.date < b.date ? 1 : -1)),
-        })),
+  // ── 聚合計算（唯讀，供各頁面直接使用） ────────────────────
+  getMonthTrades: (year, month) => {
+    const prefix = `${year}-${String(month).padStart(2, '0')}`
+    return get().trades.filter((t) => t.date.startsWith(prefix))
+  },
 
-      deleteTrade: (id) =>
-        set((s) => ({ trades: s.trades.filter((t) => t.id !== id) })),
+  getMonthStats: (year, month) => calcStats(get().getMonthTrades(year, month)),
 
-      // ── 聚合計算 ──────────────────────────────────────────
-      getMonthTrades: (year, month) => {
-        const prefix = `${year}-${String(month).padStart(2, '0')}`
-        return get().trades.filter((t) => t.date.startsWith(prefix))
-      },
+  getYearStats: (year) =>
+    Array.from({ length: 12 }, (_, i) => ({
+      month: i + 1,
+      ...get().getMonthStats(year, i + 1),
+    })),
 
-      getMonthStats: (year, month) => {
-        return calcStats(get().getMonthTrades(year, month))
-      },
+  getYears: () => {
+    const years = new Set(get().trades.map((t) => t.date.slice(0, 4)))
+    return Array.from(years).sort((a, b) => b - a)
+  },
 
-      getYearStats: (year) => {
-        return Array.from({ length: 12 }, (_, i) => ({
-          month: i + 1,
-          ...get().getMonthStats(year, i + 1),
-        }))
-      },
+  getYearTotal: (year) =>
+    calcStats(get().trades.filter((t) => t.date.startsWith(year))),
 
-      getYears: () => {
-        const years = new Set(get().trades.map((t) => t.date.slice(0, 4)))
-        return Array.from(years).sort((a, b) => b - a)
-      },
-
-      getYearTotal: (year) => {
-        return calcStats(get().trades.filter((t) => t.date.startsWith(year)))
-      },
-
-      getCareerStats: () => calcStats(get().trades),
-
-      // 覆蓋匯入（取代全部）
-      importTrades: (trades) =>
-        set({
-          trades: Array.isArray(trades)
-            ? [...trades].sort((a, b) => (a.date < b.date ? 1 : -1))
-            : [],
-        }),
-
-      // 合併匯入（依 id 去重，舊資料保留）
-      mergeTrades: (incoming) => {
-        if (!Array.isArray(incoming)) return
-        set((s) => {
-          const existingIds = new Set(s.trades.map((t) => t.id))
-          const newOnes = incoming.filter((t) => !existingIds.has(t.id))
-          const merged = [...s.trades, ...newOnes].sort((a, b) =>
-            a.date < b.date ? 1 : -1
-          )
-          return { trades: merged }
-        })
-      },
-    }),
-    { name: 'txo-trades-v2' }
-  )
-)
+  getCareerStats: () => calcStats(get().trades),
+}))
 
 export default useTradeStore

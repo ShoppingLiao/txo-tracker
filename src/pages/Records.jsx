@@ -1,14 +1,12 @@
 import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import useTradeStore from '../store/useTradeStore'
+import { useTrades } from '../hooks/useTrades'
 import TradeForm from '../components/Records/TradeForm'
 import { fmtMoney, fmtPct, profitClass, MONTH_NAMES } from '../utils/format'
 import './Records.css'
 
 export default function Records() {
-  const trades = useTradeStore((s) => s.trades)
-  const deleteTrade = useTradeStore((s) => s.deleteTrade)
-  const getYears = useTradeStore((s) => s.getYears)
+  const { trades, deleteTrade, getYears } = useTrades()
   const [urlParams] = useSearchParams()
 
   const currentYear = String(new Date().getFullYear())
