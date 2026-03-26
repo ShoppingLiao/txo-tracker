@@ -60,7 +60,7 @@ export default function MarketIndex() {
                 const d          = dayjs(r.date)
                 const settlement = isSettlementDay(r.date)
                 const diff11     = r.price11 != null && r.close != null
-                  ? r.price11 - r.close : null
+                  ? r.close - r.price11 : null
                 const diffCls    = diffClass(diff11)
                 return (
                   <tr key={r.date} className={settlement ? 'mi-row-settlement' : ''}>
