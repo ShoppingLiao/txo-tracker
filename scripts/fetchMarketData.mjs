@@ -117,6 +117,27 @@ async function main() {
     futuresPrice11 = futuresClose - futuresDiff11
   }
 
+  // 5. 即時抓取期貨現價（若於 11:00 執行則可作為 futuresPrice11）
+  const currentUTC = new Date().getUTCHours()
+  // 檢查是否大約在台灣時間 11:00 (UTC 03:xx)
+  if (currentUTC === 3) {
+    try {
+      const misRes = await fetch('https://mis.taifex.com.tw/futures/api/getQuoteList', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({"MarketType":"0","SymbolType":"F","KindID":"1","CID":"TXF","ExpireCode":"","SortColumn":"","SortType":"A"})
+      });
+      const misData = await misRes.json();
+      const tx = misData.RtData.QuoteList.find(q => q.DispEName.startsWith('TX') && q.DispEName.length === 5);
+      if (tx && tx.CLastPrice) {
+        futuresPrice11 = parseFloat(tx.CLastPrice);
+        console.log(`[Futures] 成功即時抓取 11:00 台指期報價: ${futuresPrice11}`);
+      }
+    } catch (e) {
+      console.error('抓取 MIS 即時期貨行情失敗:', e);
+    }
+  }
+
   const record = { 
     ...existingData,
     date, 
