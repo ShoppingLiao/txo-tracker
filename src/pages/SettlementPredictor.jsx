@@ -11,27 +11,75 @@ function fmt(n) {
   return Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 })
 }
 
-function RangeBlock({ label, base, range }) {
-  const [upA, upB]     = range.up
-  const [downA, downB] = range.down
+function Thermometer({ taiex, futures }) {
+  const t = RANGES.taiex
+  const f = RANGES.futures
+
+  // 加權指數邊界
+  const tUpOuter  = taiex   + t.up[1]    // 上方外緣（安全區起點）
+  const tUpInner  = taiex   + t.up[0]    // 上方內緣（危險區起點）
+  const tDnInner  = taiex   + t.down[0]  // 下方內緣（危險區終點）
+  const tDnOuter  = taiex   + t.down[1]  // 下方外緣（安全區終點）
+
+  // 台指期貨邊界
+  const fUpOuter  = futures + f.up[1]
+  const fUpInner  = futures + f.up[0]
+  const fDnInner  = futures + f.down[0]
+  const fDnOuter  = futures + f.down[1]
+
   return (
-    <div className="sp-range-card">
-      <div className="sp-range-title">{label}</div>
-      <div className="sp-range-row up">
-        <span className="sp-tag up">多方區間</span>
-        <span className="sp-pts">+{upA} ~ +{upB} 點</span>
-        <span className="sp-prices">
-          {fmt(base + upA)} ~ {fmt(base + upB)}
-        </span>
+    <div className="thermo">
+
+      {/* ── 上方安全區 ── */}
+      <div className="thermo-zone safe">
+        <span className="thermo-zone-label">安全區</span>
       </div>
-      <div className="sp-divider">｜</div>
-      <div className="sp-range-row down">
-        <span className="sp-tag down">空方區間</span>
-        <span className="sp-pts">{downA} ~ {downB} 點</span>
-        <span className="sp-prices">
-          {fmt(base + downA)} ~ {fmt(base + downB)}
-        </span>
+
+      {/* ── 上方邊界帶 ── */}
+      <div className="thermo-band">
+        <div className="thermo-band-line top">
+          <span className="thermo-val taiex">{fmt(tUpOuter)}</span>
+          <span className="thermo-col-label">加權 ｜ 台指期</span>
+          <span className="thermo-val futures">{fmt(fUpOuter)}</span>
+        </div>
+        <div className="thermo-band-inner">
+          <span className="thermo-val taiex dim">{fmt(tUpInner)}</span>
+          <span className="thermo-band-arrow">▼ 估算區間 ▼</span>
+          <span className="thermo-val futures dim">{fmt(fUpInner)}</span>
+        </div>
+        <div className="thermo-band-line bottom">
+          <div className="thermo-line" />
+        </div>
       </div>
+
+      {/* ── 危險區 ── */}
+      <div className="thermo-zone danger">
+        <span className="thermo-zone-label">危險區</span>
+        <span className="thermo-zone-sub">收盤點數未明顯離開 11:00</span>
+      </div>
+
+      {/* ── 下方邊界帶 ── */}
+      <div className="thermo-band">
+        <div className="thermo-band-line top">
+          <div className="thermo-line" />
+        </div>
+        <div className="thermo-band-inner">
+          <span className="thermo-val taiex dim">{fmt(tDnInner)}</span>
+          <span className="thermo-band-arrow">▼ 估算區間 ▼</span>
+          <span className="thermo-val futures dim">{fmt(fDnInner)}</span>
+        </div>
+        <div className="thermo-band-line bottom">
+          <span className="thermo-val taiex">{fmt(tDnOuter)}</span>
+          <span className="thermo-col-label">加權 ｜ 台指期</span>
+          <span className="thermo-val futures">{fmt(fDnOuter)}</span>
+        </div>
+      </div>
+
+      {/* ── 下方安全區 ── */}
+      <div className="thermo-zone safe">
+        <span className="thermo-zone-label">安全區</span>
+      </div>
+
     </div>
   )
 }
@@ -97,16 +145,7 @@ export default function SettlementPredictor() {
       {result && (
         <div className="sp-results">
           <div className="sp-results-title">預估收盤區間</div>
-          <RangeBlock
-            label="加權指數"
-            base={result.taiex}
-            range={RANGES.taiex}
-          />
-          <RangeBlock
-            label="台指期貨"
-            base={result.futures}
-            range={RANGES.futures}
-          />
+          <Thermometer taiex={result.taiex} futures={result.futures} />
           <p className="sp-note">
             ※ 以上數據為歷史粗估，僅供參考，不構成投資建議
           </p>

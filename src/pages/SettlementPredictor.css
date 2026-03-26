@@ -70,8 +70,8 @@
 .sp-results {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 480px;
+  gap: 12px;
+  max-width: 420px;
 }
 
 .sp-results-title {
@@ -80,61 +80,114 @@
   color: #1f3347;
 }
 
-.sp-range-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  padding: 18px 20px;
+/* ── 溫度計 ───────────────────────────────── */
+.thermo {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  font-size: 14px;
 }
 
-.sp-range-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: #555;
-  border-bottom: 1px solid #f0f2f5;
-  padding-bottom: 8px;
+/* 安全區 */
+.thermo-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 16px;
+  gap: 4px;
 }
 
-.sp-range-row {
+.thermo-zone.safe {
+  background: #e8f5e9;
+}
+
+.thermo-zone.danger {
+  background: #fff3e0;
+  padding: 28px 16px;
+}
+
+.thermo-zone-label {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.thermo-zone.safe  .thermo-zone-label { color: #2e7d32; }
+.thermo-zone.danger .thermo-zone-label { color: #e65100; }
+
+.thermo-zone-sub {
+  font-size: 11px;
+  color: #a07040;
+}
+
+/* 邊界帶 */
+.thermo-band {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.thermo-band-line {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  padding: 8px 20px;
+  gap: 8px;
 }
 
-.sp-tag {
+.thermo-line {
+  width: 100%;
+  height: 2px;
+  background: #e0e0e0;
+  border-radius: 2px;
+}
+
+.thermo-col-label {
   font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 20px;
+  color: #999;
+  white-space: nowrap;
+  flex: 1;
+  text-align: center;
+}
+
+.thermo-band-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 20px;
+  background: #fafafa;
+  border-top: 1px dashed #eee;
+  border-bottom: 1px dashed #eee;
+  gap: 8px;
+}
+
+.thermo-band-arrow {
+  font-size: 10px;
+  color: #bbb;
+  flex: 1;
+  text-align: center;
   white-space: nowrap;
 }
 
-.sp-tag.up   { background: #fff0f0; color: #e03131; }
-.sp-tag.down { background: #f0fff4; color: #2f9e44; }
-
-.sp-pts {
-  font-size: 14px;
-  font-weight: 600;
-  min-width: 110px;
+/* 數值 */
+.thermo-val {
+  font-size: 15px;
+  font-weight: 700;
+  min-width: 72px;
+  white-space: nowrap;
 }
 
-.sp-range-row.up   .sp-pts { color: #e03131; }
-.sp-range-row.down .sp-pts { color: #2f9e44; }
+.thermo-val.taiex   { text-align: left;  color: #1f3347; }
+.thermo-val.futures { text-align: right; color: #4a235a; }
 
-.sp-prices {
-  font-size: 14px;
-  color: #444;
-  margin-left: auto;
-}
-
-.sp-divider {
-  text-align: center;
-  color: #ddd;
-  font-size: 18px;
-  line-height: 1;
+.thermo-val.dim {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.6;
 }
 
 .sp-note {
@@ -148,5 +201,5 @@
   .sp-card,
   .sp-results { max-width: 100%; }
 
-  .sp-prices { display: none; }
+  .thermo-val { font-size: 13px; min-width: 60px; }
 }
