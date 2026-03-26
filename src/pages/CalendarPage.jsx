@@ -74,7 +74,7 @@ export default function CalendarPage() {
   const today    = useMemo(() => dayjs(), [])
   const next     = useMemo(() => getNextSettlement(today), [today])
   const diff     = next ? next.startOf('day').diff(today.startOf('day'), 'day') : null
-  const [selMonth, setSelMonth] = useState(null) // null = 全年
+  const [selMonth, setSelMonth] = useState(new Date().getMonth() + 1) // 預設當月
 
   const visibleMonths = selMonth ? [selMonth] : Array.from({ length: 12 }, (_, i) => i + 1)
 
