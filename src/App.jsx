@@ -11,6 +11,7 @@ import Guide from './pages/Guide'
 import CalendarPage from './pages/CalendarPage'
 import MarketIndex from './pages/MarketIndex'
 import SettlementPredictor from './pages/SettlementPredictor'
+import PnLHub from './pages/PnLHub'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -37,6 +38,7 @@ function AppRoutes() {
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="market" element={<MarketIndex />} />
         <Route path="predictor" element={<SettlementPredictor />} />
+        <Route path="pnl" element={<PnLHub />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
