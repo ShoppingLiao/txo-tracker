@@ -13,7 +13,7 @@ function fmt(n) {
 }
 
 // ── 溫度計元件（共用） ─────────────────────────────────────────
-function Thermometer({ taiexBase, futuresBase, taiexRange, futuresRange }) {
+function Thermometer({ taiexBase, futuresBase, taiexRange, futuresRange, showInnerBand = true }) {
   const tUpOuter  = taiexBase   + taiexRange.up[1]
   const tUpInner  = taiexBase   + taiexRange.up[0]
   const tDnInner  = taiexBase   + taiexRange.down[0]
@@ -36,11 +36,13 @@ function Thermometer({ taiexBase, futuresBase, taiexRange, futuresRange }) {
           <span className="thermo-col-label">加權 ｜ 台指期</span>
           <span className="thermo-val futures">{fmt(fUpOuter)}</span>
         </div>
-        <div className="thermo-band-inner">
-          <span className="thermo-val taiex dim">{fmt(tUpInner)}</span>
-          <span className="thermo-band-arrow">▲ 估算區間 ▲</span>
-          <span className="thermo-val futures dim">{fmt(fUpInner)}</span>
-        </div>
+        {showInnerBand && (
+          <div className="thermo-band-inner">
+            <span className="thermo-val taiex dim">{fmt(tUpInner)}</span>
+            <span className="thermo-band-arrow">▲ 估算區間 ▲</span>
+            <span className="thermo-val futures dim">{fmt(fUpInner)}</span>
+          </div>
+        )}
         <div className="thermo-band-line">
           <div className="thermo-line" />
         </div>
@@ -61,11 +63,13 @@ function Thermometer({ taiexBase, futuresBase, taiexRange, futuresRange }) {
         <div className="thermo-band-line">
           <div className="thermo-line" />
         </div>
-        <div className="thermo-band-inner">
-          <span className="thermo-val taiex dim">{fmt(tDnInner)}</span>
-          <span className="thermo-band-arrow">▼ 估算區間 ▼</span>
-          <span className="thermo-val futures dim">{fmt(fDnInner)}</span>
-        </div>
+        {showInnerBand && (
+          <div className="thermo-band-inner">
+            <span className="thermo-val taiex dim">{fmt(tDnInner)}</span>
+            <span className="thermo-band-arrow">▼ 估算區間 ▼</span>
+            <span className="thermo-val futures dim">{fmt(fDnInner)}</span>
+          </div>
+        )}
         <div className="thermo-band-line">
           <span className="thermo-val taiex">{fmt(tDnOuter)}</span>
           <span className="thermo-col-label">加權 ｜ 台指期</span>
@@ -182,6 +186,7 @@ export default function SettlementPredictor() {
                 futuresBase={result.futures}
                 taiexRange={historicalRange.taiex}
                 futuresRange={historicalRange.futures}
+                showInnerBand={false}
               />
             </>
           ) : (
