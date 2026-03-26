@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react'
-import { subscribeMarketIndex } from '../services/marketIndexService'
+import { useState, useMemo } from 'react'
+import useMarketStore from '../store/useMarketStore'
 import './SettlementPredictor.css'
 
 // 手動估算區間（暫定）
@@ -85,11 +85,7 @@ export default function SettlementPredictor() {
   const [taiex,   setTaiex]   = useState('')
   const [futures, setFutures] = useState('')
   const [result,  setResult]  = useState(null)
-  const [records, setRecords] = useState([])
-
-  useEffect(() => {
-    return subscribeMarketIndex(setRecords, 60)
-  }, [])
+  const records = useMarketStore((s) => s.marketRecords)
 
   // 從歷史資料算出最大漲跌幅
   const historicalRange = useMemo(() => {

@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import dayjs from 'dayjs'
-import { subscribeMarketIndex } from '../services/marketIndexService'
+import useMarketStore from '../store/useMarketStore'
 import { isSettlementDay } from '../utils/settlements'
 import { MONTH_NAMES } from '../utils/format'
 import './MarketIndex.css'
@@ -18,19 +18,11 @@ function diffClass(val) {
 }
 
 export default function MarketIndex() {
-  const [records, setRecords]   = useState([])
-  const [loading, setLoading]   = useState(true)
+  const records = useMarketStore((s) => s.marketRecords)
+  const loading = records.length === 0
   const currentYear = String(new Date().getFullYear())
   const [selYear, setSelYear]   = useState(currentYear)
   const [selMonth, setSelMonth] = useState(null)
-
-  useEffect(() => {
-    const unsub = subscribeMarketIndex((data) => {
-      setRecords(data)
-      setLoading(false)
-    })
-    return unsub
-  }, [])
 
   const allYears = useMemo(() => {
     const set = new Set(records.map(r => r.date.slice(0, 4)))
