@@ -103,7 +103,7 @@ export default function MarketIndex() {
                 <th>開盤</th>
                 <th>11 點</th>
                 <th>收盤</th>
-                <th>11點-收盤</th>
+                <th>尾盤落差</th>
               </tr>
             </thead>
             <tbody>
@@ -130,7 +130,16 @@ export default function MarketIndex() {
                 }
 
                 // 台指期貨 view
-                const fd = r.futuresDiff11 ?? null
+                const fo = r.futuresOpen ?? null
+                const fc = r.futuresClose ?? null
+                const fp11 = r.futuresPrice11 ?? null
+                
+                // 優先使用從資料庫抓到的 / 推算出的 diff
+                let fd = r.futuresDiff11 ?? null
+                if (fd === null && fc !== null && fp11 !== null) {
+                  fd = fc - fp11
+                }
+                
                 return (
                   <tr key={r.date} className={settlement ? 'mi-row-settlement' : ''}>
                     <td className="mi-flag">
@@ -138,9 +147,9 @@ export default function MarketIndex() {
                     </td>
                     <td className="mi-date">{d.format('MM/DD')}</td>
                     <td className="mi-dow">{DOW_ZH[d.day()]}</td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td>—</td>
+                    <td>{fmt(fo)}</td>
+                    <td>{fmt(fp11)}</td>
+                    <td>{fmt(fc)}</td>
                     <td className={diffClass(fd)}>{fmtDiff(fd)}</td>
                   </tr>
                 )

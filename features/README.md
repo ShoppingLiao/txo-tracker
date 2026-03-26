@@ -18,4 +18,4 @@
 
 | 檔案 | 功能 | 狀態 |
 |---|---|---|
-| [futures-data-source.md](futures-data-source.md) | 台指期貨資料自動化（開盤/收盤/11點） | 🔍 調查中 |
+| [futures-data-source.md](futures-data-source.md) | 台指期貨資料自動化（開盤/收盤/11點） | ✅ 已完成 |

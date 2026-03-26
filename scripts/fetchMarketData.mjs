@@ -38,7 +38,7 @@ function todayTW() {
 // ── 主程式 ────────────────────────────────────────────────────
 async function main() {
   const date = todayTW()
-  console.log(`[${new Date().toISOString()}] 抓取 ${date} 大盤行情...`)
+  console.log(`[${new Date().toISOString()}] 抓取 ${date} 大盤與期貨行情...`)
 
   // 1. 每日 K 棒（開盤、收盤）
   const histUrl = `${BASE}/historical/candles/${SYMBOL}` +
@@ -67,9 +67,68 @@ async function main() {
     console.warn('找不到 11:00 分鐘 K 棒，price11 記為 null')
   }
 
-  // 3. 寫入 Firestore  marketIndex/{date}
-  const record = { date, open, price11, close, updatedAt: new Date().toISOString() }
-  await db.collection('marketIndex').doc(date).set(record)
+  // 3. 抓取台指期（一般交易時段，近月合約）開盤及收盤價
+  let futuresOpen = null
+  let futuresClose = null
+  try {
+    const ymd = date.replace(/-/g, '%2F')
+    const taifexRes = await fetch('https://www.taifex.com.tw/cht/3/futDataDown', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: `down_type=1&queryStartDate=${ymd}&queryEndDate=${ymd}&commodity_id=TX`
+    })
+    if (taifexRes.ok) {
+      const buf = await taifexRes.arrayBuffer()
+      const txt = new TextDecoder('big5').decode(buf)
+      const lines = txt.split('\n')
+      const dataLines = lines.slice(1).filter(l => l.trim() !== '')
+      
+      // 找尋 'TX' & '一般'，且到期月份不能有 '/'（長度為 6 的純月份，像是 202604）
+      let txGeneralRows = dataLines.map(l => l.split(','))
+        .filter(r => r[1] === 'TX' && r[17] === '一般' && r[2].trim().length === 6)
+      
+      if (txGeneralRows.length > 0) {
+        // 以到期月份排序，確保拿最近的月份
+        txGeneralRows.sort((a,b) => a[2].trim().localeCompare(b[2].trim()))
+        const r = txGeneralRows[0]
+        futuresOpen = parseInt(r[3], 10)
+        futuresClose = parseInt(r[6], 10)
+      } else {
+        console.warn('TAIFEX CSV 有回傳，但未找到 TX 一般時段的近月合約資料。')
+      }
+    } else {
+      console.warn(`TAIFEX API 錯誤：${taifexRes.status}`)
+    }
+  } catch (e) {
+    console.error('抓取台指期資料時發生異常：', e)
+  }
+
+  // 4. 寫入 Firestore  marketIndex/{date}
+  // 取出現有資料（以便推算 futuresPrice11）
+  const docRef = db.collection('marketIndex').doc(date)
+  const docSnap = await docRef.get()
+  const existingData = docSnap.exists ? docSnap.data() : {}
+  
+  let futuresPrice11 = existingData.futuresPrice11 ?? null
+  const futuresDiff11 = existingData.futuresDiff11 ?? null
+  
+  // 若我們有 futuresClose 且已有手動補好的 futuresDiff11，則自動推算出 11:00 的價格
+  if (futuresClose !== null && futuresDiff11 !== null && futuresPrice11 === null) {
+    futuresPrice11 = futuresClose - futuresDiff11
+  }
+
+  const record = { 
+    ...existingData,
+    date, 
+    open, 
+    price11, 
+    close,
+    ...(futuresOpen !== null && { futuresOpen }),
+    ...(futuresClose !== null && { futuresClose }),
+    ...(futuresPrice11 !== null && { futuresPrice11 }),
+    updatedAt: new Date().toISOString() 
+  }
+  await docRef.set(record)
 
   console.log('已儲存：', JSON.stringify(record))
 }
