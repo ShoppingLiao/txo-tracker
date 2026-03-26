@@ -52,5 +52,6 @@ export function useFirestoreSync() {
       setMarketRecords(records)
       saveCache(records)
     })
+
   }, [])
 }
