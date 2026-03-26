@@ -7,8 +7,9 @@ const navItems = [
   { path: '/monthly', label: '月結算', icon: '📅' },
   { path: '/yearly',  label: '年結算', icon: '📊' },
   { path: '/calendar', label: '行事曆', icon: '🗓️' },
-  { path: '/market',  label: '大盤',   icon: '📈' },
-  { path: '/guide',   label: '說明',   icon: '📖' },
+  { path: '/market',    label: '大盤',   icon: '📈' },
+  { path: '/predictor', label: '預測',   icon: '🎯' },
+  { path: '/guide',     label: '說明',   icon: '📖' },
 ]
 
 export default function BottomNav() {

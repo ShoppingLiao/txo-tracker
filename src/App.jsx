@@ -10,6 +10,7 @@ import Yearly from './pages/Yearly'
 import Guide from './pages/Guide'
 import CalendarPage from './pages/CalendarPage'
 import MarketIndex from './pages/MarketIndex'
+import SettlementPredictor from './pages/SettlementPredictor'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -35,6 +36,7 @@ function AppRoutes() {
         <Route path="guide" element={<Guide />} />
         <Route path="calendar" element={<CalendarPage />} />
         <Route path="market" element={<MarketIndex />} />
+        <Route path="predictor" element={<SettlementPredictor />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
