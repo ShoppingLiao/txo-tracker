@@ -47,8 +47,14 @@ function Thermometer({ taiexBase, futuresBase, taiexRange, futuresRange }) {
       </div>
 
       <div className="thermo-zone danger">
-        <span className="thermo-zone-label">危險區</span>
-        <span className="thermo-zone-sub">收盤點數未明顯離開 11:00</span>
+        <div className="thermo-danger-row">
+          <span className="thermo-base-val taiex">{fmt(taiexBase)}</span>
+          <div className="thermo-danger-center">
+            <span className="thermo-zone-label">危險區</span>
+            <span className="thermo-zone-sub">收盤點數未明顯離開 11:00</span>
+          </div>
+          <span className="thermo-base-val futures">{fmt(futuresBase)}</span>
+        </div>
       </div>
 
       <div className="thermo-band">

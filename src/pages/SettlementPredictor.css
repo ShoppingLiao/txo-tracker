@@ -123,6 +123,32 @@
   color: #a07040;
 }
 
+.thermo-danger-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+
+.thermo-danger-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.thermo-base-val {
+  font-size: 16px;
+  font-weight: 800;
+  min-width: 72px;
+  white-space: nowrap;
+}
+
+.thermo-base-val.taiex   { text-align: left;  color: #1a5276; }
+.thermo-base-val.futures { text-align: right; color: #4a235a; }
+
 /* 邊界帶 */
 .thermo-band {
   background: #fff;
