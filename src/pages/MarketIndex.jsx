@@ -34,7 +34,7 @@ export default function MarketIndex() {
     const set = new Set(records.map(r => r.date.slice(0, 4)))
     set.add(currentYear)
     return Array.from(set).sort((a, b) => b - a)
-  }, [records])
+  }, [records, currentYear])
 
   const filtered = useMemo(() => {
     return records.filter(r => {
@@ -159,7 +159,7 @@ export default function MarketIndex() {
         </div>
       )}
 
-      <p className="mi-note">資料來源：富果 API · 每交易日 14:00 後自動更新　🔔 = 結算日</p>
+      <p className="mi-note">資料來源：富果 API ． 每交易日 14:00 後自動更新 🔔 = 結算日</p>
     </div>
   )
 }
