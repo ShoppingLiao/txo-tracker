@@ -6,6 +6,7 @@ const navItems = [
   { path: '/records', label: '紀錄',   icon: '📋' },
   { path: '/monthly', label: '月結算', icon: '📅' },
   { path: '/yearly',  label: '年結算', icon: '📊' },
+  { path: '/calendar', label: '行事曆', icon: '🗓️' },
   { path: '/guide',   label: '說明',   icon: '📖' },
 ]
 
