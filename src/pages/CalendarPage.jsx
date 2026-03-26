@@ -1,24 +1,9 @@
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
+import { SETTLEMENTS_2026 as SETTLEMENTS } from '../utils/settlements'
 import './CalendarPage.css'
 
 const YEAR = 2026
-
-// 2026 台指期選擇權結算日（來源：台指期選擇權拷貝.numbers）
-const SETTLEMENTS = {
-  1:  [2, 7, 9, 14, 16, 21, 23, 28, 30],
-  2:  [4, 6, 11, 23, 25],
-  3:  [2, 4, 6, 11, 13, 18, 20, 25, 27],
-  4:  [1, 7, 8, 10, 15, 17, 22, 24, 29],
-  5:  [4, 6, 8, 13, 15, 20, 22, 27, 29],
-  6:  [3, 5, 10, 12, 17, 22, 24, 26],
-  7:  [1, 3, 8, 10, 15, 17, 22, 24, 29, 31],
-  8:  [5, 7, 12, 14, 19, 21, 26, 28],
-  9:  [2, 4, 9, 11, 16, 18, 23, 29, 30],
-  10: [2, 7, 12, 14, 16, 21, 23, 28, 30],
-  11: [4, 6, 11, 13, 18, 20, 25, 27],
-  12: [2, 4, 9, 11, 16, 18, 23, 28, 30],
-}
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

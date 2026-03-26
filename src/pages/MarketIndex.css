@@ -53,6 +53,27 @@
   background: #f8f9fa;
 }
 
+/* 旗標欄（結算 icon）*/
+.mi-table th.mi-th-flag,
+.mi-table td.mi-flag {
+  width: 28px;
+  text-align: center;
+  padding: 10px 4px;
+}
+
+.mi-settlement-icon {
+  font-size: 14px;
+}
+
+/* 結算日整行底色 */
+.mi-table tbody tr.mi-row-settlement td {
+  background: #fffbe6;
+}
+
+.mi-table tbody tr.mi-row-settlement:hover td {
+  background: #fff3cd;
+}
+
 /* 日期、星期置中 */
 .mi-table td.mi-date,
 .mi-table td.mi-dow {
@@ -60,7 +81,7 @@
   color: #555;
 }
 
-/* ── 漲跌顏色（台灣習慣：漲紅、跌綠）──── */
+/* ── 差額顏色（台灣習慣：正紅負綠）──── */
 .mi-table td.up   { color: #e03131; font-weight: 600; }
 .mi-table td.down { color: #2f9e44; font-weight: 600; }
 

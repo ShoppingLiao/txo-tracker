@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { subscribeMarketIndex } from '../services/marketIndexService'
+import { isSettlementDay } from '../utils/settlements'
 import './MarketIndex.css'
 
 const DOW_ZH = ['日', '一', '二', '三', '四', '五', '六']
@@ -10,7 +11,7 @@ function fmt(n) {
   return Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
 }
 
-function changeClass(val) {
+function diffClass(val) {
   if (val == null) return ''
   return val > 0 ? 'up' : val < 0 ? 'down' : ''
 }
@@ -45,35 +46,34 @@ export default function MarketIndex() {
           <table className="mi-table">
             <thead>
               <tr>
+                <th className="mi-th-flag"></th>
                 <th>日期</th>
                 <th>星期</th>
                 <th>開盤</th>
                 <th>11 點</th>
                 <th>收盤</th>
-                <th>漲跌</th>
-                <th>漲跌幅</th>
+                <th>11點-收盤</th>
               </tr>
             </thead>
             <tbody>
               {records.map((r) => {
-                const d      = dayjs(r.date)
-                const change = r.open != null && r.close != null
-                  ? r.close - r.open : null
-                const pct    = r.open != null && r.open !== 0 && change != null
-                  ? (change / r.open * 100) : null
-                const cls    = changeClass(change)
+                const d          = dayjs(r.date)
+                const settlement = isSettlementDay(r.date)
+                const diff11     = r.price11 != null && r.close != null
+                  ? r.price11 - r.close : null
+                const diffCls    = diffClass(diff11)
                 return (
-                  <tr key={r.date}>
+                  <tr key={r.date} className={settlement ? 'mi-row-settlement' : ''}>
+                    <td className="mi-flag">
+                      {settlement && <span className="mi-settlement-icon" title="結算日">🔔</span>}
+                    </td>
                     <td className="mi-date">{d.format('MM/DD')}</td>
                     <td className="mi-dow">{DOW_ZH[d.day()]}</td>
                     <td>{fmt(r.open)}</td>
                     <td>{fmt(r.price11)}</td>
-                    <td className={cls}>{fmt(r.close)}</td>
-                    <td className={cls}>
-                      {change != null ? (change > 0 ? '+' : '') + fmt(change) : '—'}
-                    </td>
-                    <td className={cls}>
-                      {pct != null ? (pct > 0 ? '+' : '') + pct.toFixed(2) + '%' : '—'}
+                    <td>{fmt(r.close)}</td>
+                    <td className={diffCls}>
+                      {diff11 != null ? (diff11 > 0 ? '+' : '') + fmt(diff11) : '—'}
                     </td>
                   </tr>
                 )
@@ -83,7 +83,7 @@ export default function MarketIndex() {
         </div>
       )}
 
-      <p className="mi-note">資料來源：富果 API · 每交易日 14:00 後自動更新</p>
+      <p className="mi-note">資料來源：富果 API · 每交易日 14:00 後自動更新　🔔 = 結算日</p>
     </div>
   )
 }
