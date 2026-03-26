@@ -190,6 +190,28 @@
   opacity: 0.6;
 }
 
+.sp-card-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f3347;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.sp-card-sub {
+  font-size: 11px;
+  font-weight: 400;
+  color: #888;
+}
+
+.sp-loading {
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+  padding: 20px 0;
+}
+
 .sp-note {
   font-size: 11px;
   color: #aaa;

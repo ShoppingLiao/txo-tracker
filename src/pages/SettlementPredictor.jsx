@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { subscribeMarketIndex } from '../services/marketIndexService'
 import './SettlementPredictor.css'
 
-// 歷史估算區間（暫定，後續可調整）
-const RANGES = {
+// 手動估算區間（暫定）
+const MANUAL_RANGES = {
   taiex:   { up: [150, 250],  down: [-250, -350] },
   futures: { up: [100, 200],  down: [-200, -300] },
 }
@@ -11,33 +12,26 @@ function fmt(n) {
   return Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 })
 }
 
-function Thermometer({ taiex, futures }) {
-  const t = RANGES.taiex
-  const f = RANGES.futures
+// ── 溫度計元件（共用） ─────────────────────────────────────────
+function Thermometer({ taiexBase, futuresBase, taiexRange, futuresRange }) {
+  const tUpOuter  = taiexBase   + taiexRange.up[1]
+  const tUpInner  = taiexBase   + taiexRange.up[0]
+  const tDnInner  = taiexBase   + taiexRange.down[0]
+  const tDnOuter  = taiexBase   + taiexRange.down[1]
 
-  // 加權指數邊界
-  const tUpOuter  = taiex   + t.up[1]    // 上方外緣（安全區起點）
-  const tUpInner  = taiex   + t.up[0]    // 上方內緣（危險區起點）
-  const tDnInner  = taiex   + t.down[0]  // 下方內緣（危險區終點）
-  const tDnOuter  = taiex   + t.down[1]  // 下方外緣（安全區終點）
-
-  // 台指期貨邊界
-  const fUpOuter  = futures + f.up[1]
-  const fUpInner  = futures + f.up[0]
-  const fDnInner  = futures + f.down[0]
-  const fDnOuter  = futures + f.down[1]
+  const fUpOuter  = futuresBase + futuresRange.up[1]
+  const fUpInner  = futuresBase + futuresRange.up[0]
+  const fDnInner  = futuresBase + futuresRange.down[0]
+  const fDnOuter  = futuresBase + futuresRange.down[1]
 
   return (
     <div className="thermo">
-
-      {/* ── 上方安全區 ── */}
       <div className="thermo-zone safe">
         <span className="thermo-zone-label">安全區</span>
       </div>
 
-      {/* ── 上方邊界帶 ── */}
       <div className="thermo-band">
-        <div className="thermo-band-line top">
+        <div className="thermo-band-line">
           <span className="thermo-val taiex">{fmt(tUpOuter)}</span>
           <span className="thermo-col-label">加權 ｜ 台指期</span>
           <span className="thermo-val futures">{fmt(fUpOuter)}</span>
@@ -47,20 +41,18 @@ function Thermometer({ taiex, futures }) {
           <span className="thermo-band-arrow">▼ 估算區間 ▼</span>
           <span className="thermo-val futures dim">{fmt(fUpInner)}</span>
         </div>
-        <div className="thermo-band-line bottom">
+        <div className="thermo-band-line">
           <div className="thermo-line" />
         </div>
       </div>
 
-      {/* ── 危險區 ── */}
       <div className="thermo-zone danger">
         <span className="thermo-zone-label">危險區</span>
         <span className="thermo-zone-sub">收盤點數未明顯離開 11:00</span>
       </div>
 
-      {/* ── 下方邊界帶 ── */}
       <div className="thermo-band">
-        <div className="thermo-band-line top">
+        <div className="thermo-band-line">
           <div className="thermo-line" />
         </div>
         <div className="thermo-band-inner">
@@ -68,26 +60,48 @@ function Thermometer({ taiex, futures }) {
           <span className="thermo-band-arrow">▼ 估算區間 ▼</span>
           <span className="thermo-val futures dim">{fmt(fDnInner)}</span>
         </div>
-        <div className="thermo-band-line bottom">
+        <div className="thermo-band-line">
           <span className="thermo-val taiex">{fmt(tDnOuter)}</span>
           <span className="thermo-col-label">加權 ｜ 台指期</span>
           <span className="thermo-val futures">{fmt(fDnOuter)}</span>
         </div>
       </div>
 
-      {/* ── 下方安全區 ── */}
       <div className="thermo-zone safe">
         <span className="thermo-zone-label">安全區</span>
       </div>
-
     </div>
   )
 }
 
+// ── 主頁面 ────────────────────────────────────────────────────
 export default function SettlementPredictor() {
   const [taiex,   setTaiex]   = useState('')
   const [futures, setFutures] = useState('')
   const [result,  setResult]  = useState(null)
+  const [records, setRecords] = useState([])
+
+  useEffect(() => {
+    return subscribeMarketIndex(setRecords, 60)
+  }, [])
+
+  // 從歷史資料算出最大漲跌幅
+  const historicalRange = useMemo(() => {
+    const diffs = records
+      .filter(r => r.price11 != null && r.close != null)
+      .map(r => Math.round(r.close - r.price11))
+
+    if (diffs.length === 0) return null
+
+    const maxUp   = Math.max(...diffs)   // 最大漲幅（最大正值）
+    const maxDown = Math.min(...diffs)   // 最大跌幅（最大負值）
+
+    return {
+      taiex:   { up: [0, maxUp],   down: [0, maxDown] },
+      futures: { up: [0, maxUp],   down: [0, maxDown] },
+      count: diffs.length,
+    }
+  }, [records])
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -144,8 +158,34 @@ export default function SettlementPredictor() {
 
       {result && (
         <div className="sp-results">
-          <div className="sp-results-title">預估收盤區間</div>
-          <Thermometer taiex={result.taiex} futures={result.futures} />
+
+          {/* 卡片一：手動估算 */}
+          <div className="sp-card-label">估算區間（手動設定）</div>
+          <Thermometer
+            taiexBase={result.taiex}
+            futuresBase={result.futures}
+            taiexRange={MANUAL_RANGES.taiex}
+            futuresRange={MANUAL_RANGES.futures}
+          />
+
+          {/* 卡片二：歷史極值 */}
+          {historicalRange ? (
+            <>
+              <div className="sp-card-label" style={{ marginTop: 20 }}>
+                歷史極值區間
+                <span className="sp-card-sub">近 {historicalRange.count} 個交易日最大漲跌幅</span>
+              </div>
+              <Thermometer
+                taiexBase={result.taiex}
+                futuresBase={result.futures}
+                taiexRange={historicalRange.taiex}
+                futuresRange={historicalRange.futures}
+              />
+            </>
+          ) : (
+            <div className="sp-loading">歷史資料載入中...</div>
+          )}
+
           <p className="sp-note">
             ※ 以上數據為歷史粗估，僅供參考，不構成投資建議
           </p>
