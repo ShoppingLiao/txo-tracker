@@ -1,0 +1,8 @@
+{
+  "name": "txo-tracker-scripts",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}

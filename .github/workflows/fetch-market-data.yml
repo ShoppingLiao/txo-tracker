@@ -1,0 +1,27 @@
+name: Fetch Market Data
+
+on:
+  schedule:
+    # 台灣時間 14:00 = UTC 06:00，週一至週五（市場收盤後）
+    - cron: '0 6 * * 1-5'
+  workflow_dispatch:  # 允許手動觸發
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install script dependencies
+        run: npm install
+        working-directory: scripts
+
+      - name: Fetch and store market data
+        env:
+          FUGLE_API_KEY: ${{ secrets.FUGLE_API_KEY }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node scripts/fetchMarketData.mjs

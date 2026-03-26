@@ -34,8 +34,9 @@ src/
 │   └── AuthContext.jsx          # Google 登入狀態（user, loading, signIn, signOut）
 │
 ├── services/
-│   └── tradeService.js          # Firestore CRUD（addTrade, updateTrade, deleteTrade,
-│                                #   subscribeTrades, batchImport, deleteAllTrades）
+│   ├── tradeService.js          # Firestore CRUD（addTrade, updateTrade, deleteTrade,
+│   │                            #   subscribeTrades, batchImport, deleteAllTrades）
+│   └── marketIndexService.js    # 大盤行情 Firestore 讀取（subscribeMarketIndex）
 │
 ├── store/
 │   └── useTradeStore.js         # Zustand store（setTrades + 查詢方法，無 CRUD）
@@ -54,7 +55,10 @@ src/
 │   ├── Dashboard.jsx/.css       # 生涯總覽
 │   ├── Records.jsx/.css         # 操作紀錄（表格，月份分組）
 │   ├── Monthly.jsx/.css         # 月結算（12 張卡片）
-│   └── Yearly.jsx/.css          # 年結算（桌面橫向矩陣 / 手機轉置表格）
+│   ├── Yearly.jsx/.css          # 年結算（桌面橫向矩陣 / 手機轉置表格）
+│   ├── CalendarPage.jsx/.css    # 結算行事曆（2026 年結算日 grid）
+│   ├── MarketIndex.jsx/.css     # 大盤行情（每日開盤/11點/收盤歷史表格）
+│   └── Guide.jsx/.css           # 匯入說明（渲染 docs/ai-import-guide.md）
 │
 └── components/
     ├── Layout/
@@ -75,6 +79,8 @@ src/
 
 ## 資料流
 
+### 交易紀錄（per-user）
+
 ```
 Google 登入
     ↓
@@ -94,6 +100,22 @@ tradeService.addTrade(uid, data)   ← 寫入 Firestore
 onSnapshot 觸發 → store 自動更新   ← UI 自動重渲
 ```
 
+### 大盤行情（共享資料，自動排程）
+
+```
+GitHub Actions (每日 14:00 台灣時間)
+    ↓
+scripts/fetchMarketData.mjs
+    ↓  呼叫 Fugle API（IX0001 每日K棒 + 盤中1分鐘K棒）
+    ↓
+Firebase Admin SDK 寫入 marketIndex/{date}
+
+前端：
+marketIndexService.subscribeMarketIndex()
+    ↓
+onSnapshot → MarketIndex 頁面即時更新
+```
+
 ### Firestore 結構
 
 ```
@@ -103,6 +125,10 @@ users/
       {tradeId}/    ← document ID = String(trade.id)
         id, date, dayOfWeek, contracts,
         commission, tax, profit, returnRate, note
+
+marketIndex/
+  {YYYY-MM-DD}/   ← 由 GitHub Actions 寫入（Admin SDK），前端唯讀
+    date, open, price11, close, updatedAt
 ```
 
 ---

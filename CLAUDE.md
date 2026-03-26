@@ -16,6 +16,7 @@
 - **useTrades() hook**：所有元件的統一資料 hook，不要讓元件直接呼叫 tradeService
 - **雙版面（桌面/手機）**：部分頁面有兩套 HTML（如 Yearly），用 CSS media query 切換顯示
 - **台灣色彩習慣**：正數（獲利）用紅色，負數（虧損）用綠色
+- **大盤行情**：Fugle API 由 GitHub Actions 每日 14:00 抓取，寫入 Firestore `marketIndex`；前端只讀，使用者不直接呼叫 Fugle
 
 ## 重要注意事項
 
@@ -35,6 +36,7 @@
 | `skill/deploy.md` | 部署流程、GitHub Secrets |
 | `skill/ui-guide.md` | 顏色規範、RWD、新增頁面 |
 | `skill/add-data.md` | 資料格式、匯入/匯出 |
+| `skill/market-data.md` | 大盤行情排程、Fugle API、手動補資料 |
 | `docs/ai-import-guide.md` | 使用者 AI 輔助匯入指南 |
 
 ---
@@ -60,3 +62,8 @@
 ### 資料備份與遷移
 - 使用者可從 Sidebar（桌面）或 TopBar 選單（手機）匯出/匯入 JSON
 - 批次寫入使用 `tradeService.batchImport(uid, trades)`（每批 400 筆）
+
+### 大盤行情手動補資料
+- Firebase Console → Firestore → `marketIndex` → 新增文件（ID = 日期）
+- 欄位：`date`（string）、`open`（number）、`price11`（number）、`close`（number）、`updatedAt`（string）
+- 或手動觸發 GitHub Actions → Fetch Market Data

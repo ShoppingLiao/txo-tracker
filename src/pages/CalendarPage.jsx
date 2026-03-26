@@ -90,7 +90,7 @@ function MonthCard({ month, todayM, todayD, year }) {
 export default function CalendarPage() {
   const today = useMemo(() => dayjs(), [])
   const next  = useMemo(() => getNextSettlement(today), [today])
-  const diff  = next ? next.diff(today, 'day') : null
+  const diff  = next ? next.startOf('day').diff(today.startOf('day'), 'day') : null
 
   return (
     <div className="cal-page">

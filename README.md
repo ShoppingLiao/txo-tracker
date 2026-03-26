@@ -12,6 +12,8 @@
 - **操作紀錄** — 依年份 / 月份篩選，支援新增、編輯、刪除
 - **月結算** — 12 個月損益卡片，點擊跳轉明細
 - **年結算** — 跨年月份矩陣，一眼掌握歷史績效
+- **結算行事曆** — 2026 年台指選擇權結算日行事曆，標示今日與下一個結算日
+- **大盤行情** — 每日自動抓取加權指數開盤 / 11 點現價 / 收盤，歷史紀錄一覽
 - **手機 RWD** — 底部導覽列，支援行動裝置操作
 
 ### 資料儲存
@@ -83,4 +85,5 @@ React 19 · Vite 8 · Zustand 5 · React Router 7 · Firebase 12（Auth + Firest
 | [skill/deploy.md](skill/deploy.md) | 部署流程、GitHub Actions |
 | [skill/ui-guide.md](skill/ui-guide.md) | UI 顏色規範、RWD、新增頁面指引 |
 | [skill/add-data.md](skill/add-data.md) | 資料格式規範、匯入說明 |
+| [skill/market-data.md](skill/market-data.md) | 大盤行情自動抓取、Fugle API、手動補資料 |
 | [docs/ai-import-guide.md](docs/ai-import-guide.md) | 使用 AI 輔助建立 JSON 資料 |

@@ -9,6 +9,7 @@ import Monthly from './pages/Monthly'
 import Yearly from './pages/Yearly'
 import Guide from './pages/Guide'
 import CalendarPage from './pages/CalendarPage'
+import MarketIndex from './pages/MarketIndex'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -33,6 +34,7 @@ function AppRoutes() {
         <Route path="yearly" element={<Yearly />} />
         <Route path="guide" element={<Guide />} />
         <Route path="calendar" element={<CalendarPage />} />
+        <Route path="market" element={<MarketIndex />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

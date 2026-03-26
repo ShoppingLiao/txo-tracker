@@ -1,0 +1,82 @@
+.mi-page {}
+
+.mi-loading,
+.mi-empty {
+  text-align: center;
+  color: #888;
+  padding: 48px 0;
+  font-size: 15px;
+}
+
+/* ── 表格容器 ─────────────────────────────── */
+.mi-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  background: #fff;
+}
+
+.mi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.mi-table th {
+  background: #1f3347;
+  color: #d0d8e4;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 10px 14px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.mi-table th:first-child,
+.mi-table th:nth-child(2) {
+  text-align: center;
+}
+
+.mi-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0f2f5;
+  color: #333;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.mi-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mi-table tbody tr:hover td {
+  background: #f8f9fa;
+}
+
+/* 日期、星期置中 */
+.mi-table td.mi-date,
+.mi-table td.mi-dow {
+  text-align: center;
+  color: #555;
+}
+
+/* ── 漲跌顏色（台灣習慣：漲紅、跌綠）──── */
+.mi-table td.up   { color: #e03131; font-weight: 600; }
+.mi-table td.down { color: #2f9e44; font-weight: 600; }
+
+/* ── 備註 ─────────────────────────────────── */
+.mi-note {
+  margin-top: 12px;
+  font-size: 11px;
+  color: #aaa;
+  text-align: right;
+}
+
+/* ── RWD ─────────────────────────────────── */
+@media (max-width: 480px) {
+  .mi-table th,
+  .mi-table td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}

@@ -9,6 +9,7 @@ const navItems = [
   { path: '/monthly', label: '月結算',   icon: '📅' },
   { path: '/yearly',  label: '年結算',   icon: '📊' },
   { path: '/calendar', label: '結算行事曆', icon: '🗓️' },
+  { path: '/market',  label: '大盤行情',  icon: '📈' },
   { path: '/guide',   label: '匯入說明',  icon: '📖' },
 ]
 
