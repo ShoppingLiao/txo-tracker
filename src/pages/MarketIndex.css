@@ -51,9 +51,9 @@
 /* 旗標欄（結算 icon）*/
 .mi-table th.mi-th-flag,
 .mi-table td.mi-flag {
-  width: 28px;
+  width: 48px;
   text-align: center;
-  padding: 10px 4px;
+  padding: 10px 6px;
 }
 
 .mi-settlement-icon {

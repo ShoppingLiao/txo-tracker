@@ -46,7 +46,7 @@ export default function MarketIndex() {
           <table className="mi-table">
             <thead>
               <tr>
-                <th className="mi-th-flag"></th>
+                <th className="mi-th-flag">結算日</th>
                 <th>日期</th>
                 <th>星期</th>
                 <th>開盤</th>
