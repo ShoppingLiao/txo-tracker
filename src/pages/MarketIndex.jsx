@@ -17,11 +17,17 @@ function diffClass(val) {
   return val > 0 ? 'up' : val < 0 ? 'down' : ''
 }
 
+function fmtDiff(val) {
+  if (val == null) return '—'
+  return (val > 0 ? '+' : '') + fmt(val)
+}
+
 export default function MarketIndex() {
   const records = useMarketStore((s) => s.marketRecords)
   const loading = records.length === 0
   const currentYear = String(new Date().getFullYear())
-  const [selYear, setSelYear]   = useState(currentYear)
+  const [view,     setView]     = useState('taiex')   // 'taiex' | 'futures'
+  const [selYear,  setSelYear]  = useState(currentYear)
   const [selMonth, setSelMonth] = useState(null)
 
   const allYears = useMemo(() => {
@@ -48,6 +54,18 @@ export default function MarketIndex() {
           <h1 className="page-title">大盤歷史行情</h1>
           <p className="page-subtitle">台灣加權指數 · 每日自動更新</p>
         </div>
+      </div>
+
+      {/* 現貨 / 期貨切換 */}
+      <div className="mi-view-tabs">
+        <button
+          className={`mi-view-tab ${view === 'taiex' ? 'active' : ''}`}
+          onClick={() => setView('taiex')}
+        >大盤現貨</button>
+        <button
+          className={`mi-view-tab ${view === 'futures' ? 'active' : ''}`}
+          onClick={() => setView('futures')}
+        >台指期貨</button>
       </div>
 
       {/* 年份 Tabs */}
@@ -92,9 +110,27 @@ export default function MarketIndex() {
               {filtered.map((r) => {
                 const d          = dayjs(r.date)
                 const settlement = isSettlementDay(r.date)
-                const diff11     = r.price11 != null && r.close != null
-                  ? r.close - r.price11 : null
-                const diffCls    = diffClass(diff11)
+
+                if (view === 'taiex') {
+                  const diff11  = r.price11 != null && r.close != null
+                    ? r.close - r.price11 : null
+                  return (
+                    <tr key={r.date} className={settlement ? 'mi-row-settlement' : ''}>
+                      <td className="mi-flag">
+                        {settlement && <span className="mi-settlement-icon" title="結算日">🔔</span>}
+                      </td>
+                      <td className="mi-date">{d.format('MM/DD')}</td>
+                      <td className="mi-dow">{DOW_ZH[d.day()]}</td>
+                      <td>{fmt(r.open)}</td>
+                      <td>{fmt(r.price11)}</td>
+                      <td>{fmt(r.close)}</td>
+                      <td className={diffClass(diff11)}>{fmtDiff(diff11)}</td>
+                    </tr>
+                  )
+                }
+
+                // 台指期貨 view
+                const fd = r.futuresDiff11 ?? null
                 return (
                   <tr key={r.date} className={settlement ? 'mi-row-settlement' : ''}>
                     <td className="mi-flag">
@@ -102,13 +138,10 @@ export default function MarketIndex() {
                     </td>
                     <td className="mi-date">{d.format('MM/DD')}</td>
                     <td className="mi-dow">{DOW_ZH[d.day()]}</td>
-                    <td>{fmt(r.open)}</td>
-                    <td>{fmt(r.price11)}</td>
-                    <td>{fmt(r.close)}</td>
-                    <td className={diffCls}>
-                      {diff11 != null ? (diff11 > 0 ? '+' : '') + fmt(diff11) : '—'}
-                    </td>
-
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td className={diffClass(fd)}>{fmtDiff(fd)}</td>
                   </tr>
                 )
               })}

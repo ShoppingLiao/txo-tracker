@@ -78,6 +78,30 @@
 .mi-table td.up   { color: #e03131; font-weight: 600; }
 .mi-table td.down { color: #2f9e44; font-weight: 600; }
 
+/* ── 現貨/期貨切換 ────────────────────────── */
+.mi-view-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mi-view-tab {
+  padding: 8px 20px;
+  border: 2px solid #1f3347;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f3347;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.mi-view-tab.active {
+  background: #1f3347;
+  color: #fff;
+}
+
 /* ── 備註 ─────────────────────────────────── */
 .mi-note {
   margin-top: 12px;
