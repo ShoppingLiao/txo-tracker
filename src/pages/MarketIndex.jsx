@@ -93,7 +93,8 @@ export default function MarketIndex() {
                 <th>開盤</th>
                 <th>11 點</th>
                 <th>收盤</th>
-                <th>11點-收盤</th>
+                <th>加權 11點-收盤</th>
+                <th>台指期 11點-收盤</th>
               </tr>
             </thead>
             <tbody>
@@ -103,6 +104,7 @@ export default function MarketIndex() {
                 const diff11     = r.price11 != null && r.close != null
                   ? r.close - r.price11 : null
                 const diffCls    = diffClass(diff11)
+                const futCls     = diffClass(r.futuresDiff11 ?? null)
                 return (
                   <tr key={r.date} className={settlement ? 'mi-row-settlement' : ''}>
                     <td className="mi-flag">
@@ -115,6 +117,9 @@ export default function MarketIndex() {
                     <td>{fmt(r.close)}</td>
                     <td className={diffCls}>
                       {diff11 != null ? (diff11 > 0 ? '+' : '') + fmt(diff11) : '—'}
+                    </td>
+                    <td className={futCls}>
+                      {r.futuresDiff11 != null ? (r.futuresDiff11 > 0 ? '+' : '') + fmt(r.futuresDiff11) : '—'}
                     </td>
                   </tr>
                 )
