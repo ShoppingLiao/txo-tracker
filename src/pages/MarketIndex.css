@@ -28,20 +28,15 @@
   font-weight: 600;
   font-size: 12px;
   padding: 10px 14px;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.mi-table th:first-child,
-.mi-table th:nth-child(2) {
   text-align: center;
+  white-space: nowrap;
 }
 
 .mi-table td {
   padding: 10px 14px;
   border-bottom: 1px solid #f0f2f5;
   color: #333;
-  text-align: right;
+  text-align: center;
   white-space: nowrap;
 }
 
@@ -74,10 +69,8 @@
   background: #fff3cd;
 }
 
-/* 日期、星期置中 */
 .mi-table td.mi-date,
 .mi-table td.mi-dow {
-  text-align: center;
   color: #555;
 }
 
