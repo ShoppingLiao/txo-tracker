@@ -36,13 +36,16 @@ src/
 ├── services/
 │   ├── tradeService.js          # Firestore CRUD（addTrade, updateTrade, deleteTrade,
 │   │                            #   subscribeTrades, batchImport, deleteAllTrades）
-│   └── marketIndexService.js    # 大盤行情 Firestore 讀取（subscribeMarketIndex）
+│   └── marketIndexService.js    # 大盤行情 Firestore 讀取（subscribeMarketIndex，無 limit）
 │
 ├── store/
-│   └── useTradeStore.js         # Zustand store（setTrades + 查詢方法，無 CRUD）
+│   ├── useTradeStore.js         # Zustand store：交易紀錄（setTrades + 查詢方法，無 CRUD）
+│   └── useMarketStore.js        # Zustand store：大盤行情（setMarketRecords，全域共用）
 │
 ├── hooks/
-│   ├── useFirestoreSync.js      # 訂閱 Firestore onSnapshot → 更新 store
+│   ├── useFirestoreSync.js      # App 啟動後訂閱 Firestore：
+│   │                            #   - trades：per-user onSnapshot
+│   │                            #   - marketIndex：localStorage 快取 2 小時，過期才訂閱
 │   ├── useTrades.js             # 統一 hook：讀取 store + 寫入 Firestore + 匯出/匯入
 │   └── useFileStorage.js        # 舊版本機檔案 hook（保留，已不使用）
 │
@@ -57,7 +60,8 @@ src/
 │   ├── Monthly.jsx/.css         # 月結算（12 張卡片）
 │   ├── Yearly.jsx/.css          # 年結算（桌面橫向矩陣 / 手機轉置表格）
 │   ├── CalendarPage.jsx/.css    # 結算行事曆（2026 年結算日 grid）
-│   ├── MarketIndex.jsx/.css     # 大盤行情（每日開盤/11點/收盤歷史表格）
+│   ├── MarketIndex.jsx/.css     # 大盤行情（大盤現貨／台指期貨切換 tab，歷史表格）
+│   ├── SettlementPredictor.jsx/.css  # 結算預測小助手（11:00 輸入 → 溫度計區間）
 │   └── Guide.jsx/.css           # 匯入說明（渲染 docs/ai-import-guide.md）
 │
 └── components/
@@ -100,7 +104,7 @@ tradeService.addTrade(uid, data)   ← 寫入 Firestore
 onSnapshot 觸發 → store 自動更新   ← UI 自動重渲
 ```
 
-### 大盤行情（共享資料，自動排程）
+### 大盤行情（共享資料，自動排程 + localStorage 快取）
 
 ```
 GitHub Actions (每日 14:00 台灣時間)
@@ -110,10 +114,16 @@ scripts/fetchMarketData.mjs
     ↓
 Firebase Admin SDK 寫入 marketIndex/{date}
 
-前端：
-marketIndexService.subscribeMarketIndex()
+前端（App 啟動時，useFirestoreSync）：
     ↓
-onSnapshot → MarketIndex 頁面即時更新
+檢查 localStorage 快取（txo_marketIndex，TTL 2 小時）
+    ├─ 快取有效 → useMarketStore.setMarketRecords(cached)  ← 不打 Firestore
+    └─ 快取過期 → subscribeMarketIndex() onSnapshot
+                      ↓
+                 useMarketStore.setMarketRecords(records)
+                 localStorage 更新快取
+    ↓
+MarketIndex、SettlementPredictor 頁面從 useMarketStore 讀取（零次額外 Firestore）
 ```
 
 ### Firestore 結構
@@ -128,7 +138,12 @@ users/
 
 marketIndex/
   {YYYY-MM-DD}/   ← 由 GitHub Actions 寫入（Admin SDK），前端唯讀
-    date, open, price11, close, updatedAt
+    date           string    日期
+    open           number    開盤（09:00，Fugle API）
+    price11        number|null  11:00 現價（Fugle API，可能為 null）
+    close          number    收盤（13:30，Fugle API）
+    futuresDiff11  number|null  台指期貨 11點-收盤差值（手動維護）
+    updatedAt      string    ISO 8601 寫入時間
 ```
 
 ---
@@ -187,3 +202,4 @@ marketIndex/
 - `profitClass()` 回傳 `'profit'` / `'loss'` / `''`
 - 報酬率公式：`profit / (contracts × 1250)`，存小數，`fmtPct()` 自動乘 100 顯示
 - CSS 權重：`.trade-table td.profit` 需比 `.trade-table td` 更高才能覆蓋顏色
+- `marketIndex` 頁面與 `SettlementPredictor` 頁面共用同一份 store 資料，**不各自訂閱 Firestore**

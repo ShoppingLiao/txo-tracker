@@ -13,10 +13,14 @@
 
 - **Firebase Auth + Firestore**：Google 登入，資料依 UID 隔離儲存於雲端
 - **Zustand**：純 in-memory cache，**不使用 persist**（資料來源是 Firestore）
+  - `useTradeStore`：交易紀錄（per-user）
+  - `useMarketStore`：大盤行情（全域共用，所有頁面從此讀取）
 - **useTrades() hook**：所有元件的統一資料 hook，不要讓元件直接呼叫 tradeService
 - **雙版面（桌面/手機）**：部分頁面有兩套 HTML（如 Yearly），用 CSS media query 切換顯示
 - **台灣色彩習慣**：正數（獲利）用紅色，負數（虧損）用綠色
-- **大盤行情**：Fugle API 由 GitHub Actions 每日 14:00 抓取，寫入 Firestore `marketIndex`；前端只讀，使用者不直接呼叫 Fugle
+- **大盤行情**：Fugle API 由 GitHub Actions 每日 14:00 抓取，寫入 Firestore `marketIndex`；前端只讀，不直接呼叫 Fugle
+- **大盤行情快取**：`useFirestoreSync` 在 App 啟動時訂閱 Firestore，資料存入 localStorage（TTL 2 小時）；快取有效時不打 Firestore
+- **台指期貨**：Fugle API 不支援期貨，`futuresDiff11` 欄位只能手動用 `scripts/fillFuturesDiff11.mjs` 補寫
 
 ## 重要注意事項
 
@@ -24,6 +28,7 @@
 - CSS 權重陷阱：`.trade-table td { color: #333 }` 會蓋過 `.profit`，需用 `.trade-table td.profit`
 - Zustand selector 取函式 reference，搭配 `useMemo` 計算，避免無限渲染
 - in-app 瀏覽器（LINE/FB）不支援 signInWithPopup，Login.jsx 已有偵測提示
+- **MarketIndex 和 SettlementPredictor 共用 `useMarketStore` 資料，不各自訂閱 Firestore**
 
 ---
 
@@ -36,7 +41,7 @@
 | `skill/deploy.md` | 部署流程、GitHub Secrets |
 | `skill/ui-guide.md` | 顏色規範、RWD、新增頁面 |
 | `skill/add-data.md` | 資料格式、匯入/匯出 |
-| `skill/market-data.md` | 大盤行情排程、Fugle API、手動補資料 |
+| `skill/market-data.md` | 大盤行情排程、Fugle API、手動補資料、快取機制 |
 | `docs/ai-import-guide.md` | 使用者 AI 輔助匯入指南 |
 
 ---
@@ -47,7 +52,7 @@
 1. 建立 `src/pages/NewPage.jsx` + `.css`
 2. `App.jsx` 加 `<Route>`
 3. `Sidebar.jsx` + `BottomNav.jsx` 加 navItem
-4. 使用 `useTrades()` 讀取資料
+4. 使用 `useTrades()` 讀取交易資料；使用 `useMarketStore` 讀取大盤資料
 
 ### 修改資料結構
 1. 更新 `src/services/tradeService.js`（Firestore 寫入邏輯）
@@ -64,6 +69,11 @@
 - 批次寫入使用 `tradeService.batchImport(uid, trades)`（每批 400 筆）
 
 ### 大盤行情手動補資料
-- Firebase Console → Firestore → `marketIndex` → 新增文件（ID = 日期）
-- 欄位：`date`（string）、`open`（number）、`price11`（number）、`close`（number）、`updatedAt`（string）
+- **加權指數 price11**：`FIREBASE_SA=./scripts/serviceAccount.json node scripts/fillPrice11FromManual.mjs`
+- **台指期貨 futuresDiff11**：在 `scripts/fillFuturesDiff11.mjs` 的 `FUTURES_DIFFS` 加新資料，再執行 `FIREBASE_SA=./scripts/serviceAccount.json node scripts/fillFuturesDiff11.mjs`
+- Firebase Console 直接補：`marketIndex/{YYYY-MM-DD}` 文件，欄位見 `skill/market-data.md`
 - 或手動觸發 GitHub Actions → Fetch Market Data
+
+### 大盤行情快取問題
+- 若更新資料後前端沒反應：清除 localStorage `txo_marketIndex` 快取，或等 2 小時自動過期
+- 快取 key：`txo_marketIndex`，格式：`{ data: [...], cachedAt: timestamp }`
