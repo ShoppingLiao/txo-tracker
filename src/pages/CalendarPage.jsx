@@ -1,12 +1,10 @@
-import { useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import dayjs from 'dayjs'
 import { SETTLEMENTS_2026 as SETTLEMENTS } from '../utils/settlements'
+import { MONTH_NAMES } from '../utils/format'
 import './CalendarPage.css'
 
 const YEAR = 2026
-
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const MONTH_ZH = ['一月','二月','三月','四月','五月','六月',
                   '七月','八月','九月','十月','十一月','十二月']
 const DOW = ['日', '一', '二', '三', '四', '五', '六']
@@ -73,9 +71,12 @@ function MonthCard({ month, todayM, todayD, year }) {
 }
 
 export default function CalendarPage() {
-  const today = useMemo(() => dayjs(), [])
-  const next  = useMemo(() => getNextSettlement(today), [today])
-  const diff  = next ? next.startOf('day').diff(today.startOf('day'), 'day') : null
+  const today    = useMemo(() => dayjs(), [])
+  const next     = useMemo(() => getNextSettlement(today), [today])
+  const diff     = next ? next.startOf('day').diff(today.startOf('day'), 'day') : null
+  const [selMonth, setSelMonth] = useState(null) // null = 全年
+
+  const visibleMonths = selMonth ? [selMonth] : Array.from({ length: 12 }, (_, i) => i + 1)
 
   return (
     <div className="cal-page">
@@ -84,6 +85,21 @@ export default function CalendarPage() {
           <h1 className="page-title">台指期選擇權結算行事曆</h1>
           <p className="page-subtitle">{YEAR} Settlement Calendar</p>
         </div>
+      </div>
+
+      {/* 年份 Tab（目前僅 2026） */}
+      <div className="tabs">
+        <button className="tab active">{YEAR}</button>
+      </div>
+
+      {/* 月份 Tabs */}
+      <div className="month-tabs">
+        <button className={`month-tab ${selMonth === null ? 'active' : ''}`}
+          onClick={() => setSelMonth(null)}>全年</button>
+        {MONTH_NAMES.map((name, i) => (
+          <button key={i} className={`month-tab ${selMonth === i + 1 ? 'active' : ''}`}
+            onClick={() => setSelMonth(i + 1)}>{name}</button>
+        ))}
       </div>
 
       {/* 下一個結算日提示 */}
@@ -108,7 +124,7 @@ export default function CalendarPage() {
 
       {/* 月份卡片 */}
       <div className="cal-months">
-        {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+        {visibleMonths.map((m) => (
           <MonthCard
             key={m}
             month={m}

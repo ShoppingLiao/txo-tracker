@@ -21,6 +21,37 @@ h1, h2, h3, h4 {
   margin: 0;
 }
 
+/* ── 共用：年份 / 月份 Tabs ─────────────────── */
+.tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+
+.tab {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab:hover  { border-color: #1a5299; color: #1a5299; }
+.tab.active { background: #1a5299; color: #fff; border-color: #1a5299; }
+
+.month-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 20px; }
+
+.month-tab {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #f0f0f0;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.month-tab:hover  { background: #e0e0e0; }
+.month-tab.active { background: #2d4a6b; color: #fff; }
+
 p {
   margin: 0;
 }

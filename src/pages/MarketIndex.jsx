@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import dayjs from 'dayjs'
 import { subscribeMarketIndex } from '../services/marketIndexService'
 import { isSettlementDay } from '../utils/settlements'
+import { MONTH_NAMES } from '../utils/format'
 import './MarketIndex.css'
 
 const DOW_ZH = ['日', '一', '二', '三', '四', '五', '六']
@@ -17,8 +18,11 @@ function diffClass(val) {
 }
 
 export default function MarketIndex() {
-  const [records, setRecords] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [records, setRecords]   = useState([])
+  const [loading, setLoading]   = useState(true)
+  const currentYear = String(new Date().getFullYear())
+  const [selYear, setSelYear]   = useState(currentYear)
+  const [selMonth, setSelMonth] = useState(null)
 
   useEffect(() => {
     const unsub = subscribeMarketIndex((data) => {
@@ -27,6 +31,23 @@ export default function MarketIndex() {
     })
     return unsub
   }, [])
+
+  const allYears = useMemo(() => {
+    const set = new Set(records.map(r => r.date.slice(0, 4)))
+    set.add(currentYear)
+    return Array.from(set).sort((a, b) => b - a)
+  }, [records])
+
+  const filtered = useMemo(() => {
+    return records.filter(r => {
+      if (!r.date.startsWith(selYear)) return false
+      if (selMonth !== null) {
+        const mm = String(selMonth).padStart(2, '0')
+        return r.date.startsWith(`${selYear}-${mm}`)
+      }
+      return true
+    })
+  }, [records, selYear, selMonth])
 
   return (
     <div className="mi-page">
@@ -37,10 +58,30 @@ export default function MarketIndex() {
         </div>
       </div>
 
+      {/* 年份 Tabs */}
+      <div className="tabs">
+        {allYears.map(y => (
+          <button key={y} className={`tab ${selYear === y ? 'active' : ''}`}
+            onClick={() => { setSelYear(y); setSelMonth(null) }}>
+            {y}
+          </button>
+        ))}
+      </div>
+
+      {/* 月份 Tabs */}
+      <div className="month-tabs">
+        <button className={`month-tab ${selMonth === null ? 'active' : ''}`}
+          onClick={() => setSelMonth(null)}>全年</button>
+        {MONTH_NAMES.map((name, i) => (
+          <button key={i} className={`month-tab ${selMonth === i + 1 ? 'active' : ''}`}
+            onClick={() => setSelMonth(i + 1)}>{name}</button>
+        ))}
+      </div>
+
       {loading ? (
         <div className="mi-loading">載入中...</div>
-      ) : records.length === 0 ? (
-        <div className="mi-empty">尚無資料，等待 GitHub Actions 首次執行後顯示</div>
+      ) : filtered.length === 0 ? (
+        <div className="mi-empty">此期間無資料</div>
       ) : (
         <div className="mi-table-wrap">
           <table className="mi-table">
@@ -56,7 +97,7 @@ export default function MarketIndex() {
               </tr>
             </thead>
             <tbody>
-              {records.map((r) => {
+              {filtered.map((r) => {
                 const d          = dayjs(r.date)
                 const settlement = isSettlementDay(r.date)
                 const diff11     = r.price11 != null && r.close != null
