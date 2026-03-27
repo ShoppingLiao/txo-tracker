@@ -16,16 +16,11 @@ function fmt(n) {
 function Thermometer({ taiexBase, futuresBase, taiexRange, futuresRange, showInnerBand = true }) {
   // taiexRange.up 和 taiexRange.down 可以是陣列 [inner, outer] 或是單一數字 outer
   const getOuter = (val) => Array.isArray(val) ? val[1] : val
-  const getInner = (val) => Array.isArray(val) ? val[0] : 0
 
   const tUpOuter  = taiexBase   + getOuter(taiexRange.up)
-  const tUpInner  = taiexBase   + getInner(taiexRange.up)
-  const tDnInner  = taiexBase   + getInner(taiexRange.down)
   const tDnOuter  = taiexBase   + getOuter(taiexRange.down)
 
   const fUpOuter  = futuresBase + getOuter(futuresRange.up)
-  const fUpInner  = futuresBase + getInner(futuresRange.up)
-  const fDnInner  = futuresBase + getInner(futuresRange.down)
   const fDnOuter  = futuresBase + getOuter(futuresRange.down)
 
   return (
@@ -42,9 +37,7 @@ function Thermometer({ taiexBase, futuresBase, taiexRange, futuresRange, showInn
         </div>
         {showInnerBand && (
           <div className="thermo-band-inner">
-            <span className="thermo-val taiex dim">{fmt(tUpInner)}</span>
             <span className="thermo-band-arrow">▲ 估算區間 ▲</span>
-            <span className="thermo-val futures dim">{fmt(fUpInner)}</span>
           </div>
         )}
         <div className="thermo-band-line">
@@ -69,9 +62,7 @@ function Thermometer({ taiexBase, futuresBase, taiexRange, futuresRange, showInn
         </div>
         {showInnerBand && (
           <div className="thermo-band-inner">
-            <span className="thermo-val taiex dim">{fmt(tDnInner)}</span>
             <span className="thermo-band-arrow">▼ 估算區間 ▼</span>
-            <span className="thermo-val futures dim">{fmt(fDnInner)}</span>
           </div>
         )}
         <div className="thermo-band-line">
