@@ -4,8 +4,8 @@ import './SettlementPredictor.css'
 
 // 手動估算區間（暫定）
 const MANUAL_RANGES = {
-  taiex:   { up: [150, 250],  down: [-250, -350] },
-  futures: { up: [100, 200],  down: [-200, -300] },
+  taiex:   { up: 250, down: -350 },
+  futures: { up: 200, down: -300 },
 }
 
 function fmt(n) {
@@ -14,15 +14,19 @@ function fmt(n) {
 
 // ── 溫度計元件（共用） ─────────────────────────────────────────
 function Thermometer({ taiexBase, futuresBase, taiexRange, futuresRange, showInnerBand = true }) {
-  const tUpOuter  = taiexBase   + taiexRange.up[1]
-  const tUpInner  = taiexBase   + taiexRange.up[0]
-  const tDnInner  = taiexBase   + taiexRange.down[0]
-  const tDnOuter  = taiexBase   + taiexRange.down[1]
+  // taiexRange.up 和 taiexRange.down 可以是陣列 [inner, outer] 或是單一數字 outer
+  const getOuter = (val) => Array.isArray(val) ? val[1] : val
+  const getInner = (val) => Array.isArray(val) ? val[0] : 0
 
-  const fUpOuter  = futuresBase + futuresRange.up[1]
-  const fUpInner  = futuresBase + futuresRange.up[0]
-  const fDnInner  = futuresBase + futuresRange.down[0]
-  const fDnOuter  = futuresBase + futuresRange.down[1]
+  const tUpOuter  = taiexBase   + getOuter(taiexRange.up)
+  const tUpInner  = taiexBase   + getInner(taiexRange.up)
+  const tDnInner  = taiexBase   + getInner(taiexRange.down)
+  const tDnOuter  = taiexBase   + getOuter(taiexRange.down)
+
+  const fUpOuter  = futuresBase + getOuter(futuresRange.up)
+  const fUpInner  = futuresBase + getInner(futuresRange.up)
+  const fDnInner  = futuresBase + getInner(futuresRange.down)
+  const fDnOuter  = futuresBase + getOuter(futuresRange.down)
 
   return (
     <div className="thermo">
@@ -172,6 +176,7 @@ export default function SettlementPredictor() {
             futuresBase={result.futures}
             taiexRange={MANUAL_RANGES.taiex}
             futuresRange={MANUAL_RANGES.futures}
+            showInnerBand={true}
           />
 
           {/* 卡片二：歷史極值 */}
@@ -186,7 +191,7 @@ export default function SettlementPredictor() {
                 futuresBase={result.futures}
                 taiexRange={historicalRange.taiex}
                 futuresRange={historicalRange.futures}
-                showInnerBand={false}
+                showInnerBand={true}
               />
             </>
           ) : (

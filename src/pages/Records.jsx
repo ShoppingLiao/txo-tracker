@@ -10,8 +10,9 @@ export default function Records() {
   const [urlParams] = useSearchParams()
 
   const currentYear = String(new Date().getFullYear())
+  const currentMonth = new Date().getMonth() + 1
   const initYear = urlParams.get('year') || currentYear
-  const initMonth = urlParams.get('month') ? Number(urlParams.get('month')) : null
+  const initMonth = urlParams.get('month') ? Number(urlParams.get('month')) : currentMonth
   const [selYear, setSelYear] = useState(initYear)
   const [selMonth, setSelMonth] = useState(initMonth) // null = 全年
   const [showForm, setShowForm] = useState(false)

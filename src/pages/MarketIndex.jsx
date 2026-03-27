@@ -26,9 +26,11 @@ export default function MarketIndex() {
   const records = useMarketStore((s) => s.marketRecords)
   const loading = records.length === 0
   const currentYear = String(new Date().getFullYear())
+  const currentMonth = new Date().getMonth() + 1
+
   const [view,     setView]     = useState('taiex')   // 'taiex' | 'futures'
   const [selYear,  setSelYear]  = useState(currentYear)
-  const [selMonth, setSelMonth] = useState(null)
+  const [selMonth, setSelMonth] = useState(currentMonth)
 
   const allYears = useMemo(() => {
     const set = new Set(records.map(r => r.date.slice(0, 4)))

@@ -12,9 +12,17 @@ function autoDay(dateStr) {
   return DAY_MAP[d.getDay()] || ''
 }
 
+function getTodayStr() {
+  const d = new Date()
+  const yyyy = d.getFullYear()
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
 const EMPTY = {
-  date: '',
-  dayOfWeek: '',
+  date: getTodayStr(),
+  dayOfWeek: autoDay(getTodayStr()),
   contracts: '',
   commission: '',
   tax: '',
@@ -95,7 +103,7 @@ export default function TradeForm({ trade, onClose }) {
             <label>
               <span>總口數 <span className="required">*</span></span>
               <input
-                type="number" min="0"
+                type="number" min="0" inputMode="decimal" pattern="[0-9]*"
                 value={form.contracts}
                 onChange={(e) => set('contracts', e.target.value)}
                 required placeholder="0"
@@ -104,7 +112,7 @@ export default function TradeForm({ trade, onClose }) {
             <label>
               手續費
               <input
-                type="number" min="0"
+                type="number" min="0" inputMode="decimal" pattern="[0-9]*"
                 value={form.commission}
                 onChange={(e) => set('commission', e.target.value)}
                 placeholder="0"
@@ -113,7 +121,7 @@ export default function TradeForm({ trade, onClose }) {
             <label>
               期交稅
               <input
-                type="number" min="0"
+                type="number" min="0" inputMode="decimal" pattern="[0-9]*"
                 value={form.tax}
                 onChange={(e) => set('tax', e.target.value)}
                 placeholder="0"
@@ -126,7 +134,7 @@ export default function TradeForm({ trade, onClose }) {
             <label>
               <span>實際獲利 <span className="required">*</span></span>
               <input
-                type="number"
+                type="number" inputMode="decimal"
                 value={form.profit}
                 onChange={(e) => set('profit', e.target.value)}
                 required placeholder="正數獲利 / 負數虧損"
