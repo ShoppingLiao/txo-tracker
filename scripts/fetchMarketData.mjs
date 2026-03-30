@@ -39,9 +39,10 @@ function todayTW() {
 async function main() {
   const date = todayTW()
   const currentUTC = new Date().getUTCHours()
-  const is11AM = currentUTC === 3
+  // 使用 currentUTC < 5 來判定為早盤 11:00 的排程（因為 GitHub Action 可能延遲到 04:xx 甚至更晚，只要在 13:00 以前都視為早盤）
+  const is11AM = currentUTC < 5
 
-  console.log(`[${new Date().toISOString()}] 抓取 ${date} 大盤與期貨行情 (is11AM: ${is11AM})...`)
+  console.log(`[${new Date().toISOString()}] 抓取 ${date} 大盤與期貨行情 (is11AM: ${is11AM}, UTC Hour: ${currentUTC})...`)
 
   // 先拿資料庫現有資料
   const docRef = db.collection('marketIndex').doc(date)
