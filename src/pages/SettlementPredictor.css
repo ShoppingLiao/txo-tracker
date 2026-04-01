@@ -10,6 +10,7 @@
   .sp-content {
     flex-direction: row;
     align-items: flex-start;
+    flex-wrap: wrap;
   }
 }
 
@@ -83,9 +84,30 @@
 .sp-results {
   display: flex;
   flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  flex: 1;
+}
+
+@media (min-width: 1024px) {
+  .sp-results {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.sp-result-item {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
   width: 100%;
+  flex: 1;
+  min-width: 320px;
   max-width: 400px;
+}
+
+.sp-note-full {
+  width: 100%;
 }
 
 .sp-results-title {

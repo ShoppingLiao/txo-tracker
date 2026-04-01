@@ -163,37 +163,43 @@ export default function SettlementPredictor() {
         <div className="sp-results">
 
           {/* 卡片一：手動估算 */}
-          <div className="sp-card-label">估算區間（手動設定）</div>
-          <Thermometer
-            taiexBase={result.taiex}
-            futuresBase={result.futures}
-            taiexRange={MANUAL_RANGES.taiex}
-            futuresRange={MANUAL_RANGES.futures}
-            showInnerBand={true}
-          />
+          <div className="sp-result-item">
+            <div className="sp-card-label">估算區間（手動設定）</div>
+            <Thermometer
+              taiexBase={result.taiex}
+              futuresBase={result.futures}
+              taiexRange={MANUAL_RANGES.taiex}
+              futuresRange={MANUAL_RANGES.futures}
+              showInnerBand={true}
+            />
+          </div>
 
           {/* 卡片二：歷史極值 */}
-          {historicalRange ? (
-            <>
-              <div className="sp-card-label" style={{ marginTop: 20 }}>
-                歷史極值區間
-                <span className="sp-card-sub">近 {historicalRange.count} 個結算交易日最大漲跌幅</span>
-              </div>
-              <Thermometer
-                taiexBase={result.taiex}
-                futuresBase={result.futures}
-                taiexRange={historicalRange.taiex}
-                futuresRange={historicalRange.futures}
-                showInnerBand={true}
-              />
-            </>
-          ) : (
-            <div className="sp-loading">歷史資料載入中...</div>
-          )}
+          <div className="sp-result-item">
+            {historicalRange ? (
+              <>
+                <div className="sp-card-label">
+                  歷史極值區間
+                  <span className="sp-card-sub">近 {historicalRange.count} 個結算交易日最大漲跌幅</span>
+                </div>
+                <Thermometer
+                  taiexBase={result.taiex}
+                  futuresBase={result.futures}
+                  taiexRange={historicalRange.taiex}
+                  futuresRange={historicalRange.futures}
+                  showInnerBand={true}
+                />
+              </>
+            ) : (
+              <div className="sp-loading">歷史資料載入中...</div>
+            )}
+          </div>
 
-          <p className="sp-note">
-            ※ 以上數據為歷史粗估，僅供參考，不構成投資建議
-          </p>
+          <div className="sp-note-full">
+            <p className="sp-note">
+              ※ 以上數據為歷史粗估，僅供參考，不構成投資建議
+            </p>
+          </div>
         </div>
       )}
       </div>
