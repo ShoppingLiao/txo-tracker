@@ -89,13 +89,6 @@
   flex: 1;
 }
 
-@media (min-width: 1024px) {
-  .sp-results {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-}
-
 .sp-result-item {
   display: flex;
   flex-direction: column;
