@@ -31,6 +31,7 @@ export default function MarketIndex() {
   const [view,     setView]     = useState('taiex')   // 'taiex' | 'futures'
   const [selYear,  setSelYear]  = useState(currentYear)
   const [selMonth, setSelMonth] = useState(currentMonth)
+  const [onlySettlement, setOnlySettlement] = useState(true)
 
   const allYears = useMemo(() => {
     const set = new Set(records.map(r => r.date.slice(0, 4)))
@@ -43,11 +44,12 @@ export default function MarketIndex() {
       if (!r.date.startsWith(selYear)) return false
       if (selMonth !== null) {
         const mm = String(selMonth).padStart(2, '0')
-        return r.date.startsWith(`${selYear}-${mm}`)
+        if (!r.date.startsWith(`${selYear}-${mm}`)) return false
       }
+      if (onlySettlement && !isSettlementDay(r.date)) return false
       return true
     })
-  }, [records, selYear, selMonth])
+  }, [records, selYear, selMonth, onlySettlement])
 
   return (
     <div className="mi-page">
@@ -58,16 +60,27 @@ export default function MarketIndex() {
         </div>
       </div>
 
-      {/* 現貨 / 期貨切換 */}
-      <div className="mi-view-tabs">
-        <button
-          className={`mi-view-tab ${view === 'taiex' ? 'active' : ''}`}
-          onClick={() => setView('taiex')}
-        >大盤現貨</button>
-        <button
-          className={`mi-view-tab ${view === 'futures' ? 'active' : ''}`}
-          onClick={() => setView('futures')}
-        >台指期貨</button>
+      {/* 頂部控制列：現貨/期貨切換 & 結算日勾選 */}
+      <div className="mi-top-controls">
+        <div className="mi-view-tabs">
+          <button
+            className={`mi-view-tab ${view === 'taiex' ? 'active' : ''}`}
+            onClick={() => setView('taiex')}
+          >大盤現貨</button>
+          <button
+            className={`mi-view-tab ${view === 'futures' ? 'active' : ''}`}
+            onClick={() => setView('futures')}
+          >台指期貨</button>
+        </div>
+
+        <label className="mi-filter-label">
+          <input
+            type="checkbox"
+            checked={onlySettlement}
+            onChange={(e) => setOnlySettlement(e.target.checked)}
+          />
+          結算日
+        </label>
       </div>
 
       {/* 年份 Tabs */}
