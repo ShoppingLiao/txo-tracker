@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import useMarketStore from '../store/useMarketStore'
+import { isSettlementDay } from '../utils/settlements'
 import './SettlementPredictor.css'
 
 // 手動估算區間（暫定）
@@ -86,23 +87,46 @@ export default function SettlementPredictor() {
   const [result,  setResult]  = useState(null)
   const records = useMarketStore((s) => s.marketRecords)
 
-  // 從歷史資料算出最大漲跌幅
-  const historicalRange = useMemo(() => {
-    const diffs = records
-      .filter(r => r.price11 != null && r.close != null)
+  // 整理有效資料
+  const validRecords = useMemo(() => {
+    return records.filter(r => r.price11 != null && r.close != null)
+  }, [records])
+
+  // 2. 所有結算日的歷史極值
+  const settlementRange = useMemo(() => {
+    const diffs = validRecords
+      .filter(r => isSettlementDay(r.date))
       .map(r => Math.round(r.close - r.price11))
 
     if (diffs.length === 0) return null
 
-    const maxUp   = Math.max(...diffs)   // 最大漲幅（最大正值）
-    const maxDown = Math.min(...diffs)   // 最大跌幅（最大負值）
-
+    const maxUp   = Math.max(...diffs)
+    const maxDown = Math.min(...diffs)
+    
     return {
       taiex:   { up: [0, maxUp],   down: [0, maxDown] },
       futures: { up: [0, maxUp],   down: [0, maxDown] },
       count: diffs.length,
     }
-  }, [records])
+  }, [validRecords])
+
+  // 3. 近60個交易日的歷史極值
+  const recent60Range = useMemo(() => {
+    const diffs = validRecords
+      .slice(-60)
+      .map(r => Math.round(r.close - r.price11))
+
+    if (diffs.length === 0) return null
+
+    const maxUp   = Math.max(...diffs)
+    const maxDown = Math.min(...diffs)
+    
+    return {
+      taiex:   { up: [0, maxUp],   down: [0, maxDown] },
+      futures: { up: [0, maxUp],   down: [0, maxDown] },
+      count: diffs.length,
+    }
+  }, [validRecords])
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -173,24 +197,45 @@ export default function SettlementPredictor() {
             />
           </div>
 
-          {/* 卡片二：歷史極值 */}
+          {/* 卡片二：所有結算日歷史極值 */}
           <div className="sp-result-item">
-            {historicalRange ? (
+            {settlementRange ? (
               <>
                 <div className="sp-card-label">
-                  歷史極值區間
-                  <span className="sp-card-sub">近 {historicalRange.count} 個交易日最大漲跌幅</span>
+                  結算日極值
+                  <span className="sp-card-sub">近 {settlementRange.count} 個結算日最大漲跌幅</span>
                 </div>
                 <Thermometer
                   taiexBase={result.taiex}
                   futuresBase={result.futures}
-                  taiexRange={historicalRange.taiex}
-                  futuresRange={historicalRange.futures}
+                  taiexRange={settlementRange.taiex}
+                  futuresRange={settlementRange.futures}
                   showInnerBand={true}
                 />
               </>
             ) : (
-              <div className="sp-loading">歷史資料載入中...</div>
+              <div className="sp-loading">結算日歷史資料載入中...</div>
+            )}
+          </div>
+
+          {/* 卡片三：近60交易日歷史極值 */}
+          <div className="sp-result-item">
+            {recent60Range ? (
+              <>
+                <div className="sp-card-label">
+                  近期極值
+                  <span className="sp-card-sub">近 {recent60Range.count} 個交易日最大漲跌幅</span>
+                </div>
+                <Thermometer
+                  taiexBase={result.taiex}
+                  futuresBase={result.futures}
+                  taiexRange={recent60Range.taiex}
+                  futuresRange={recent60Range.futures}
+                  showInnerBand={true}
+                />
+              </>
+            ) : (
+              <div className="sp-loading">近期歷史資料載入中...</div>
             )}
           </div>
 
