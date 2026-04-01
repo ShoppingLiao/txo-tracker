@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import useMarketStore from '../store/useMarketStore'
+import { isSettlementDay } from '../utils/settlements'
 import './SettlementPredictor.css'
 
 // 手動估算區間（暫定）
@@ -89,7 +90,7 @@ export default function SettlementPredictor() {
   // 從歷史資料算出最大漲跌幅
   const historicalRange = useMemo(() => {
     const diffs = records
-      .filter(r => r.price11 != null && r.close != null)
+      .filter(r => isSettlementDay(r.date) && r.price11 != null && r.close != null)
       .map(r => Math.round(r.close - r.price11))
 
     if (diffs.length === 0) return null
@@ -121,9 +122,10 @@ export default function SettlementPredictor() {
         </div>
       </div>
 
-      <div className="sp-card">
-        <form onSubmit={handleSubmit} className="sp-form">
-          <div className="sp-field">
+      <div className="sp-content">
+        <div className="sp-card">
+          <form onSubmit={handleSubmit} className="sp-form">
+            <div className="sp-field">
             <label className="sp-label">
               加權指數
               <span className="sp-hint">結算日 11:00 的現貨點數</span>
@@ -175,7 +177,7 @@ export default function SettlementPredictor() {
             <>
               <div className="sp-card-label" style={{ marginTop: 20 }}>
                 歷史極值區間
-                <span className="sp-card-sub">近 {historicalRange.count} 個交易日最大漲跌幅</span>
+                <span className="sp-card-sub">近 {historicalRange.count} 個結算交易日最大漲跌幅</span>
               </div>
               <Thermometer
                 taiexBase={result.taiex}
@@ -194,6 +196,7 @@ export default function SettlementPredictor() {
           </p>
         </div>
       )}
+      </div>
     </div>
   )
 }
