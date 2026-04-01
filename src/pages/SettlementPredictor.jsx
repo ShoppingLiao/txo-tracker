@@ -203,7 +203,7 @@ export default function SettlementPredictor() {
               <>
                 <div className="sp-card-label">
                   結算日極值
-                  <span className="sp-card-sub">近 {settlementRange.count} 個結算日最大漲跌幅</span>
+                  <span className="sp-card-sub">有紀錄以來</span>
                 </div>
                 <Thermometer
                   taiexBase={result.taiex}
@@ -224,7 +224,7 @@ export default function SettlementPredictor() {
               <>
                 <div className="sp-card-label">
                   近期極值
-                  <span className="sp-card-sub">近 {recent60Range.count} 個交易日最大漲跌幅</span>
+                  <span className="sp-card-sub">近60個交易日</span>
                 </div>
                 <Thermometer
                   taiexBase={result.taiex}
