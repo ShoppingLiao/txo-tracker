@@ -8,9 +8,7 @@
 
 @media (min-width: 768px) {
   .sp-content {
-    flex-direction: row;
     align-items: flex-start;
-    flex-wrap: wrap;
   }
 }
 
