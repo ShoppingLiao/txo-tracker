@@ -39,10 +39,14 @@ function todayTW() {
 async function main() {
   const date = todayTW()
   const currentUTC = new Date().getUTCHours()
-  // 使用 currentUTC < 5 來判定為早盤 11:00 的排程（因為 GitHub Action 可能延遲到 04:xx 甚至更晚，只要在 13:00 以前都視為早盤）
+  
+  // 11:00 TW = 03:00 UTC (允許 Github Action 延遲，< 5 代表是 11:00 排程)
   const is11AM = currentUTC < 5
+  // 13:25 TW = 05:25 UTC (當 getUTCHours 為 5 時代表是 13:25 排程)
+  const is1325 = currentUTC === 5
+  const isEarly = is11AM || is1325
 
-  console.log(`[${new Date().toISOString()}] 抓取 ${date} 大盤與期貨行情 (is11AM: ${is11AM}, UTC Hour: ${currentUTC})...`)
+  console.log(`[${new Date().toISOString()}] 抓取 ${date} 大盤與期貨行情 (is11AM: ${is11AM}, is1325: ${is1325}, UTC Hour: ${currentUTC})...`)
 
   // 先拿資料庫現有資料
   const docRef = db.collection('marketIndex').doc(date)
@@ -57,12 +61,14 @@ async function main() {
   let open = existingData.open ?? null
   let close = existingData.close ?? null
   let price11 = existingData.price11 ?? null
+  let price1325 = existingData.price1325 ?? null
   let futuresOpen = existingData.futuresOpen ?? null
   let futuresClose = existingData.futuresClose ?? null
   let futuresPrice11 = existingData.futuresPrice11 ?? null
+  let futuresPrice1325 = existingData.futuresPrice1325 ?? null
 
-  // 1. 若不是 11 點，就代表是盤後 (14:00)，去抓日 K (開盤、收盤)
-  if (!is11AM) {
+  // 1. 若不是 11:00 也不是 13:25，就代表是盤後 (14:00+)，去抓日 K (開盤、收盤)
+  if (!isEarly) {
     try {
       const histUrl = `${BASE}/historical/candles/${SYMBOL}` +
         `?timeframe=D&from=${date}&to=${date}&fields=open,close&sort=asc`
@@ -79,23 +85,27 @@ async function main() {
     }
   }
 
-  // 2. 盤中 1 分鐘 K 棒 → 找 11:00 那根的 open 
-  // (不論 11:00 或 14:00 都可以嘗試抓，只要缺資料)
-  if (price11 === null) {
+  // 2. 盤中 1 分鐘 K 棒 → 找 11:00 和 13:25 那根的 open 
+  // (不論哪個排程都可以嘗試抓，只要缺資料就捕)
+  if (price11 === null || price1325 === null) {
     try {
       const intradayUrl = `${BASE}/intraday/candles/${SYMBOL}?timeframe=1`
       const intraday = await get(intradayUrl)
-      const candle11 = intraday.data?.find(c => c.date.startsWith(`${date}T11:00:00`))
-      if (candle11) {
-        price11 = candle11.open
+      if (price11 === null) {
+        const candle11 = intraday.data?.find(c => c.date.startsWith(`${date}T11:00:00`))
+        if (candle11) price11 = candle11.open
+      }
+      if (price1325 === null) {
+        const candle1325 = intraday.data?.find(c => c.date.startsWith(`${date}T13:25:00`))
+        if (candle1325) price1325 = candle1325.open
       }
     } catch (e) {
-      console.log('抓取 Fugle 盤中 11:00 K 棒失敗:', e.message)
+      console.log('抓取 Fugle 盤中 K 棒失敗:', e.message)
     }
   }
 
   // 3. 抓取台指期（一般交易時段，近月合約）開盤及收盤價 (盤後 14:00 才抓)
-  if (!is11AM) {
+  if (!isEarly) {
     try {
       const ymd = date.replace(/-/g, '%2F')
       const taifexRes = await fetch('https://www.taifex.com.tw/cht/3/futDataDown', {
@@ -122,14 +132,20 @@ async function main() {
     }
   }
 
-  // 若我們有 futuresClose 且已有手動補好的 futuresDiff11，則自動推算出 11:00 的價格
+  // 若我們有 futuresClose 且已有手動補好的 futuresDiff11/futuresDiff1325，則自動推算出盤中價格
   const futuresDiff11 = existingData.futuresDiff11 ?? null
-  if (futuresClose !== null && futuresDiff11 !== null && futuresPrice11 === null) {
-    futuresPrice11 = futuresClose - futuresDiff11
+  const futuresDiff1325 = existingData.futuresDiff1325 ?? null
+  if (futuresClose !== null) {
+    if (futuresDiff11 !== null && futuresPrice11 === null) {
+      futuresPrice11 = futuresClose - futuresDiff11
+    }
+    if (futuresDiff1325 !== null && futuresPrice1325 === null) {
+      futuresPrice1325 = futuresClose - futuresDiff1325
+    }
   }
 
-  // 4. 即時抓取期貨現價（若於 11:00 執行則可作為 futuresPrice11）
-  if (is11AM && futuresPrice11 === null) {
+  // 4. 即時抓取期貨現價（若於 11:00 或 13:25 執行則可作為對應時段的 futuresPrice）
+  if ((is11AM && futuresPrice11 === null) || (is1325 && futuresPrice1325 === null)) {
     try {
       const misRes = await fetch('https://mis.taifex.com.tw/futures/api/getQuoteList', {
         method: 'POST',
@@ -139,8 +155,14 @@ async function main() {
       const misData = await misRes.json();
       const tx = misData.RtData.QuoteList.find(q => q.DispEName.startsWith('TX') && q.DispEName.length === 5);
       if (tx && tx.CLastPrice) {
-        futuresPrice11 = parseFloat(tx.CLastPrice);
-        console.log(`[Futures] 成功即時抓取 11:00 台指期報價: ${futuresPrice11}`);
+        if (is11AM) {
+          futuresPrice11 = parseFloat(tx.CLastPrice);
+          console.log(`[Futures] 成功即時抓取 11:00 台指期報價: ${futuresPrice11}`);
+        }
+        if (is1325) {
+          futuresPrice1325 = parseFloat(tx.CLastPrice);
+          console.log(`[Futures] 成功即時抓取 13:25 台指期報價: ${futuresPrice1325}`);
+        }
       }
     } catch (e) {
       console.error('抓取 MIS 即時期貨行情失敗:', e);
@@ -154,15 +176,17 @@ async function main() {
     ...(open !== null && { open }),
     ...(close !== null && { close }),
     ...(price11 !== null && { price11 }),
+    ...(price1325 !== null && { price1325 }),
     ...(futuresOpen !== null && { futuresOpen }),
     ...(futuresClose !== null && { futuresClose }),
     ...(futuresPrice11 !== null && { futuresPrice11 }),
+    ...(futuresPrice1325 !== null && { futuresPrice1325 }),
     updatedAt: new Date().toISOString() 
   }
   
   // 只有在真的有抓到任何新資料，或是本來就沒這份 document 的時候才存
   // 避免假日空轉寫入
-  const hasMarketData = open || close || price11 || futuresOpen || futuresClose || futuresPrice11;
+  const hasMarketData = open || close || price11 || price1325 || futuresOpen || futuresClose || futuresPrice11 || futuresPrice1325;
   if (hasMarketData) {
     await docRef.set(record)
     console.log('已儲存：', JSON.stringify(record))

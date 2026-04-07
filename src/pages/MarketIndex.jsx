@@ -117,6 +117,7 @@ export default function MarketIndex() {
                 <th>星期</th>
                 <th>開盤</th>
                 <th>11 點</th>
+                <th>1點25</th>
                 <th>收盤</th>
                 <th>尾盤落差</th>
               </tr>
@@ -138,6 +139,7 @@ export default function MarketIndex() {
                       <td className="mi-dow">{DOW_ZH[d.day()]}</td>
                       <td>{fmt(r.open)}</td>
                       <td>{fmt(r.price11)}</td>
+                      <td>{fmt(r.price1325)}</td>
                       <td>{fmt(r.close)}</td>
                       <td className={diffClass(diff11)}>{fmtDiff(diff11)}</td>
                     </tr>
@@ -148,6 +150,7 @@ export default function MarketIndex() {
                 const fo = r.futuresOpen ?? null
                 const fc = r.futuresClose ?? null
                 const fp11 = r.futuresPrice11 ?? null
+                const fp1325 = r.futuresPrice1325 ?? null
                 
                 // 優先使用從資料庫抓到的 / 推算出的 diff
                 let fd = r.futuresDiff11 ?? null
@@ -164,6 +167,7 @@ export default function MarketIndex() {
                     <td className="mi-dow">{DOW_ZH[d.day()]}</td>
                     <td>{fmt(fo)}</td>
                     <td>{fmt(fp11)}</td>
+                    <td>{fmt(fp1325)}</td>
                     <td>{fmt(fc)}</td>
                     <td className={diffClass(fd)}>{fmtDiff(fd)}</td>
                   </tr>
