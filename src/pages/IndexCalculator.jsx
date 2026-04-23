@@ -69,8 +69,8 @@ export default function IndexCalculator() {
                 <tr>
                   <th>股票</th>
                   <th className="th-center">漲跌點（元）</th>
-                  <th className="th-right">漲1元影響</th>
-                  <th className="th-right">本股影響點數</th>
+                  <th className="th-center">漲1元影響</th>
+                  <th className="th-center">本股影響點數</th>
                 </tr>
               </thead>
               <tbody>
