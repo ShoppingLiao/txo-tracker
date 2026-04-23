@@ -32,9 +32,13 @@
   font-size: 12px;
   font-weight: 600;
   color: #64748b;
-  text-align: left;
+  text-align: center;
   border-bottom: 1px solid #e8edf2;
   white-space: nowrap;
+}
+
+.ic-table th:first-child {
+  text-align: left;
 }
 
 .th-center { text-align: center; }
@@ -128,7 +132,7 @@
 }
 
 .ic-base-input {
-  width: 150px;
+  width: 220px;
   padding: 8px 12px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
