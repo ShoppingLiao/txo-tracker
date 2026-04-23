@@ -10,8 +10,9 @@ const navItems = [
   { path: '/yearly',  label: '年結算',   icon: '📊' },
   { path: '/calendar', label: '結算行事曆', icon: '🗓️' },
   { path: '/market',    label: '大盤行情',    icon: '📈' },
-  { path: '/predictor', label: '結算預測',    icon: '🎯' },
-  { path: '/guide',     label: '匯入說明',    icon: '📖' },
+  { path: '/predictor',   label: '結算預測',   icon: '🎯' },
+  { path: '/index-calc', label: '權值計算機', icon: '🧮' },
+  { path: '/guide',      label: '匯入說明',   icon: '📖' },
 ]
 
 export default function Sidebar() {

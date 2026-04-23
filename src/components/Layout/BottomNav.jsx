@@ -32,6 +32,11 @@ export default function BottomNav() {
         <span className="bnav-label">預測</span>
       </NavLink>
 
+      <NavLink to="/index-calc" className={({ isActive }) => `bnav-item ${isActive ? 'active' : ''}`}>
+        <span className="bnav-icon">🧮</span>
+        <span className="bnav-label">計算機</span>
+      </NavLink>
+
       <NavLink to="/guide" className={({ isActive }) => `bnav-item ${isActive ? 'active' : ''}`}>
         <span className="bnav-icon">📖</span>
         <span className="bnav-label">說明</span>

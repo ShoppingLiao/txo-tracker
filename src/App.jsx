@@ -12,6 +12,7 @@ import CalendarPage from './pages/CalendarPage'
 import MarketIndex from './pages/MarketIndex'
 import SettlementPredictor from './pages/SettlementPredictor'
 import PnLHub from './pages/PnLHub'
+import IndexCalculator from './pages/IndexCalculator'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -39,6 +40,7 @@ function AppRoutes() {
         <Route path="market" element={<MarketIndex />} />
         <Route path="predictor" element={<SettlementPredictor />} />
         <Route path="pnl" element={<PnLHub />} />
+        <Route path="index-calc" element={<IndexCalculator />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
