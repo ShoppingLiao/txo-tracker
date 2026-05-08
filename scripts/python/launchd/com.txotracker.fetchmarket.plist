@@ -112,10 +112,10 @@
   </array>
 
   <key>StandardOutPath</key>
-  <string>__REPO_ROOT__/scripts/python/.launchd.log</string>
+  <string>__LOG_DIR__/launchd.log</string>
 
   <key>StandardErrorPath</key>
-  <string>__REPO_ROOT__/scripts/python/.launchd.log</string>
+  <string>__LOG_DIR__/launchd.log</string>
 
   <key>EnvironmentVariables</key>
   <dict>
