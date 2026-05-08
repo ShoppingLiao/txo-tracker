@@ -2,8 +2,9 @@
 <!--
   本機 launchd 排程 — 抓大盤行情寫 Firestore (Fubon SDK 版)。
 
-  setup.sh --launchd 會把 __REPO_ROOT__ / __VENV_PYTHON__ 替換成實際路徑後
-  複製到 ~/Library/LaunchAgents/ 並 load。
+  setup.sh --launchd 會把 __VENV_PYTHON__ / __DEPLOY_DIR__ / __LOG_DIR__ 替換成實際路徑後
+  複製到 ~/Library/LaunchAgents/ 並 bootstrap。
+  Deploy 位置 = ~/Library/Application Support/TXOTracker/scripts/ (避開 macOS TCC)。
 
   排程:
     11:00 / 13:25 / 14:05 (週一至週五,TW)
@@ -21,13 +22,13 @@
   <key>ProgramArguments</key>
   <array>
     <string>__VENV_PYTHON__</string>
-    <string>__REPO_ROOT__/scripts/python/fetch_market_fubon.py</string>
+    <string>__DEPLOY_DIR__/fetch_market_fubon.py</string>
     <string>--slot</string>
     <string>auto</string>
   </array>
 
   <key>WorkingDirectory</key>
-  <string>__REPO_ROOT__</string>
+  <string>__DEPLOY_DIR__</string>
 
   <key>RunAtLoad</key>
   <true/>
