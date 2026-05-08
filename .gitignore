@@ -1,5 +1,6 @@
 # Logs
 logs
+log/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -27,3 +28,10 @@ example/
 *.sln
 *.sw?
 scripts/serviceAccount.json
+
+# Python venv + secrets
+scripts/python/.venv/
+scripts/python/.launchd.log
+.env
+__pycache__/
+*.pyc

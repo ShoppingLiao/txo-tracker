@@ -30,7 +30,8 @@ MarketIndex 頁面 / SettlementPredictor 頁面（唯讀）
 | `open` | number | Fugle API | 加權指數開盤價（09:00） |
 | `price11` | number \| null | Fugle API / 手動 | 加權指數 11:00 現價 |
 | `close` | number | Fugle API | 加權指數收盤價（13:30） |
-| `futuresDiff11` | number \| null | **手動維護** | 台指期貨 11點-收盤差值（close - price11） |
+| `futuresDiff11` | number \| null | 自動 / 手動補 | 台指期貨 close - price11 差值（cron 在收盤後有 close 跟 price11 時自動算）|
+| `futuresDiff1325` | number \| null | 自動 / 手動補 | 台指期貨 close - price1325 差值（同上自動算）|
 | `updatedAt` | string | 自動 | ISO 8601 寫入時間 |
 
 ---
@@ -96,14 +97,18 @@ FIREBASE_SA=./scripts/serviceAccount.json node scripts/fillPrice11FromManual.mjs
 - 只補 `price11 == null` 的記錄，不覆蓋已有值
 - 差值資料需手動維護在 `scripts/fillPrice11FromManual.mjs` 的 `MANUAL_DIFFS` 物件
 
-### 方法三：補寫台指期貨 futuresDiff11（script）
+### 方法三：補寫台指期貨 futuresDiff11（script，legacy）
+
+> 平日 cron 已會在 14:00 盤後自動算 `futuresDiff = futuresClose - futuresPrice11/1325`，
+> **這個 script 只在「歷史資料缺 futuresPrice11/1325 但你手上有 diff 數字」時才需要用**。
 
 ```bash
 FIREBASE_SA=./scripts/serviceAccount.json node scripts/fillFuturesDiff11.mjs
 ```
 
 - 每次補新資料：在 `scripts/fillFuturesDiff11.mjs` 的 `FUTURES_DIFFS` 物件新增日期與差值，再執行
-- 會覆蓋已有值（因為沒有自動化來源）
+- 會覆蓋已有值
+- 補完後 cron 下次跑會用 diff + close 反推 price11，補齊 price 欄位
 
 ### 方法四：手動觸發 GitHub Actions
 
@@ -140,7 +145,7 @@ match /marketIndex/{date} {
 | 問題 | 原因 | 解法 |
 |---|---|---|
 | `price11` 為 null | 11:00 分鐘 K 棒找不到（holiday 誤判或 API 資料缺失） | 執行 `fillPrice11FromManual.mjs` 或 Firebase Console 手動補值 |
-| `futuresDiff11` 全為 null | 未執行補寫 script | 執行 `fillFuturesDiff11.mjs` |
+| `futuresDiff11` 為 null | cron 缺 `futuresClose` 或 `futuresPrice11`（任一為 null 就無法算） | 確認當天 14:00 cron 跑成功 + TAIFEX 來源都正常；歷史資料用 `fillFuturesDiff11.mjs` 手動補 |
 | 頁面資料沒更新 | localStorage 快取仍有效（2 小時內） | 清除 `txo_marketIndex` 快取或等候自動過期 |
 | GitHub Actions 失敗 | Fugle API 回傳空資料（當日假日）| 檢查 Actions log，確認是否為台灣假日 |
 | 前端讀不到資料 | Firestore rules 未設定 read | 確認規則含 `match /marketIndex/{date}` |

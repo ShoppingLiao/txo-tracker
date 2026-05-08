@@ -132,15 +132,24 @@ async function main() {
     }
   }
 
-  // 若我們有 futuresClose 且已有手動補好的 futuresDiff11/futuresDiff1325，則自動推算出盤中價格
-  const futuresDiff11 = existingData.futuresDiff11 ?? null
-  const futuresDiff1325 = existingData.futuresDiff1325 ?? null
+  // futuresDiff = futuresClose - futuresPrice (盤後收盤 - 盤中時點)
+  // 雙向推算：
+  //   有 diff 沒 price → 反推 price（手動補歷史用，向下相容）
+  //   有 close 跟 price → 算 diff（取代手動 fillFuturesDiff11.mjs）
+  let futuresDiff11 = existingData.futuresDiff11 ?? null
+  let futuresDiff1325 = existingData.futuresDiff1325 ?? null
   if (futuresClose !== null) {
     if (futuresDiff11 !== null && futuresPrice11 === null) {
       futuresPrice11 = futuresClose - futuresDiff11
     }
     if (futuresDiff1325 !== null && futuresPrice1325 === null) {
       futuresPrice1325 = futuresClose - futuresDiff1325
+    }
+    if (futuresDiff11 === null && futuresPrice11 !== null) {
+      futuresDiff11 = futuresClose - futuresPrice11
+    }
+    if (futuresDiff1325 === null && futuresPrice1325 !== null) {
+      futuresDiff1325 = futuresClose - futuresPrice1325
     }
   }
 
@@ -181,7 +190,9 @@ async function main() {
     ...(futuresClose !== null && { futuresClose }),
     ...(futuresPrice11 !== null && { futuresPrice11 }),
     ...(futuresPrice1325 !== null && { futuresPrice1325 }),
-    updatedAt: new Date().toISOString() 
+    ...(futuresDiff11 !== null && { futuresDiff11 }),
+    ...(futuresDiff1325 !== null && { futuresDiff1325 }),
+    updatedAt: new Date().toISOString()
   }
   
   // 只有在真的有抓到任何新資料，或是本來就沒這份 document 的時候才存

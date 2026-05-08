@@ -18,9 +18,9 @@
 - **useTrades() hook**：所有元件的統一資料 hook，不要讓元件直接呼叫 tradeService
 - **雙版面（桌面/手機）**：部分頁面有兩套 HTML（如 Yearly），用 CSS media query 切換顯示
 - **台灣色彩習慣**：正數（獲利）用紅色，負數（虧損）用綠色
-- **大盤行情**：Fugle API 由 GitHub Actions 每日 14:00 抓取，寫入 Firestore `marketIndex`；前端只讀，不直接呼叫 Fugle
+- **大盤行情雙來源**：(1) GitHub Actions Node 版用 Fugle stock + TAIFEX，每日 11:00/13:25/14:00 跑；(2) 本機 launchd Python 版用富邦 fubon_neo SDK，同樣三個時點 + 開機 RunAtLoad 補抓。兩邊寫同一份 Firestore `marketIndex` 文件 + `merge:true`，過渡期並存，Python 版穩定後再砍 Node。前端只讀
 - **大盤行情快取**：`useFirestoreSync` 在 App 啟動時訂閱 Firestore，資料存入 localStorage（TTL 2 小時）；快取有效時不打 Firestore
-- **台指期貨**：Fugle API 不支援期貨，`futuresDiff11` 欄位只能手動用 `scripts/fillFuturesDiff11.mjs` 補寫
+- **台指期貨**：Fugle stock-only plan 不含期貨，盤中 11:00 / 13:25 用 TAIFEX MIS 抓即時價，盤後 14:00 用 TAIFEX CSV 抓 open/close；`futuresDiff11/1325 = futuresClose - futuresPrice` 由 cron 自動算，`scripts/fillFuturesDiff11.mjs` 改為歷史補資料專用 legacy 工具
 
 ## 重要注意事項
 
@@ -42,6 +42,7 @@
 | `skill/ui-guide.md` | 顏色規範、RWD、新增頁面 |
 | `skill/add-data.md` | 資料格式、匯入/匯出 |
 | `skill/market-data.md` | 大盤行情排程、Fugle API、手動補資料、快取機制 |
+| `scripts/python/README.md` | 本機 Python + 富邦 SDK 抓行情（launchd 排程）|
 | `docs/ai-import-guide.md` | 使用者 AI 輔助匯入指南 |
 
 ---

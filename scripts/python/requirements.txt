@@ -1,0 +1,5 @@
+firebase-admin>=6.5.0
+python-dotenv>=1.0.0
+loguru>=0.7.0
+# fubon_neo 從富邦官網下載 macOS .whl 後手動 pip install
+# https://www.fbs.com.tw/TradeAPI/docs/download/download-sdk
