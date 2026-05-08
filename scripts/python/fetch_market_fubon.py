@@ -28,10 +28,15 @@ from typing import Any
 from dotenv import load_dotenv
 from loguru import logger
 
-# .env 從 repo root (scripts/python/../../.env) 讀
-ROOT = Path(__file__).resolve().parents[2]
-load_dotenv(ROOT / ".env")
-load_dotenv(ROOT / ".env.local", override=False)
+# .env / serviceAccount.json 從 script 同目錄讀。
+#
+# 開發時 (scripts/python/) — 同目錄沒檔,fallback 往上找 repo root 的 .env
+# launchd 部署時 (~/Library/Application Support/TXOTracker/scripts/) — 同目錄已被 setup.sh 同步好
+SCRIPT_DIR = Path(__file__).resolve().parent
+ROOT = SCRIPT_DIR.parents[1]  # scripts/python/../.. = repo root (開發時用)
+for env_file in (SCRIPT_DIR / ".env", ROOT / ".env", ROOT / ".env.local"):
+    if env_file.exists():
+        load_dotenv(env_file, override=False)
 
 from fubon_login import (  # noqa: E402
     FubonLoginFailed,
@@ -200,10 +205,28 @@ def build_record(slot: str, existing: dict[str, Any], date: str) -> dict[str, An
     return record
 
 
+def _service_account_path() -> str:
+    """找 Firebase Admin SA JSON。優先序:
+    1. env FIREBASE_SA
+    2. SCRIPT_DIR/serviceAccount.json (launchd 部署位置)
+    3. <repo_root>/scripts/serviceAccount.json (開發時 fallback)
+    """
+    env_path = os.getenv("FIREBASE_SA")
+    if env_path:
+        return os.path.expanduser(env_path)
+    candidates = [
+        SCRIPT_DIR / "serviceAccount.json",
+        ROOT / "scripts" / "serviceAccount.json",
+    ]
+    for p in candidates:
+        if p.exists():
+            return str(p)
+    return str(candidates[-1])  # default for clear error
+
+
 def write_firestore(date: str, record: dict[str, Any]) -> None:
     """寫 marketIndex/{date},merge:true。"""
-    sa_path = os.getenv("FIREBASE_SA", str(ROOT / "scripts" / "serviceAccount.json"))
-    sa_path = os.path.expanduser(sa_path)
+    sa_path = _service_account_path()
 
     import firebase_admin
     from firebase_admin import credentials, firestore
