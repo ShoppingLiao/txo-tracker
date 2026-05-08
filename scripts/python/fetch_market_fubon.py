@@ -253,14 +253,13 @@ def main():
     date = today_tw_iso()
 
     # 先讀既有 (避免覆寫)
-    sa_path = os.getenv("FIREBASE_SA", str(ROOT / "scripts" / "serviceAccount.json"))
     existing: dict[str, Any] = {}
     if not args.dry_run:
         import firebase_admin
         from firebase_admin import credentials, firestore
 
         if not firebase_admin._apps:
-            firebase_admin.initialize_app(credentials.Certificate(os.path.expanduser(sa_path)))
+            firebase_admin.initialize_app(credentials.Certificate(_service_account_path()))
         snap = firestore.client().collection("marketIndex").document(date).get()
         if snap.exists:
             existing = snap.to_dict() or {}
